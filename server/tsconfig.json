@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",               // Используем более современную версию ECMAScript
+    "module": "commonjs",             // Для Node.js используем CommonJS
+    "outDir": "./dist",               // Папка для скомпилированных файлов
+    "rootDir": "./src",               // Папка с исходным кодом
+    "strict": true,                   // Включает строгую проверку типов
+    "esModuleInterop": true,          // Упрощает работу с CommonJS и ES-модулями
+    "skipLibCheck": true,             // Пропускает проверку типов в библиотеках
+    "forceConsistentCasingInFileNames": true, // Проверяет регистр имён файлов
+    "moduleResolution": "node",       // Для корректного разрешения модулей
+    "resolveJsonModule": true,        // Позволяет импортировать JSON-файлы
+    "isolatedModules": true,          // Гарантирует, что каждый файл — независимый модуль
+    "noImplicitAny": false,           // Разрешает неявное использование `any`
+    "sourceMap": true,                // Генерирует source maps для отладки
+    "experimentalDecorators": true,   // Включает поддержку декораторов (если нужно)
+    "emitDecoratorMetadata": true     // Включает метаданные для декораторов (если нужно)
+  },
+  "include": ["src/**/*"],            // Какие файлы компилировать
+  "exclude": ["node_modules", "dist"] // Какие файлы игнорировать
+}
