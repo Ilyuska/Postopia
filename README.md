@@ -1,7 +1,9 @@
 # Postopia
 
 My first fullstack project.
+
 Итоговый стек:
+
 Front-end:
 Язык программирования: TypeScript
 Библиотека: React
