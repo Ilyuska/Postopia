@@ -2,11 +2,12 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
+import userRouter from './routes/userRouter';
 
 
 dotenv.config(); // Загрузка переменных окружения из .env файла
 const app = express(); // Создание экземпляра приложения
-const PORT = process.env.PORT || 5000; // Порт сервера (по умолчанию 5000)
+const PORT = process.env.PORT || 3000; // Порт сервера (по умолчанию 3000)
 const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/mydatabase'; // Строка подключения к MongoDB
 
 // Подключение к MongoDB
@@ -23,6 +24,8 @@ app.use(express.json()); // Middleware для парсинга JSON
 app.get('/', (req, res) => {
   res.send('Hello from Backend!');
 });
+
+app.use('/', userRouter)
 
 // // Обработка ошибок сервера
 // app.use((err: Error, req: express.Request, res: express.Response, next: express.NextFunction) => {

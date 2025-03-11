@@ -18,3 +18,4 @@ dist/
 # Игнорировать файлы пакетов (если есть)
 package-lock.json
 yarn.lock
+Задачи.txt
