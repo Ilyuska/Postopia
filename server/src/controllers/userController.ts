@@ -2,38 +2,37 @@ import { Request, Response } from 'express';
 import UserService from '../services/userService';
 
 class UserController {
-    async registration (req: Request, res: Response) {
+    async registration (req: Request, res: Response): Promise<void> {
         try {
-            const {name, email, password} = req.body
-            if (!email || !password || !name) {
-                return res.status(400).json({ message: 'email, имя и пароль обязательны' });
-            }
-            
-            const user = await UserService.registration(req.body)
-            res.json(user)
-        } catch (e) {
-            console.error('Ошибка при регистрации:', e);
-            res.status(500).json({message: 'Проблема с регистрацией', e})
+            const {name, email, password} = req.body           
+            const user = await UserService.registration({name, email, password})
+            res.status(201).json(user)
+        } catch (error) {
+            console.error('Ошибка при регистрации:', error);
+            res.status(500).json({message: 'Ошибка с нашей стороны. Попробуйте позже', error})
         }
     }
 
-//     async authorization (req: Request, res: Response) {
-//         try {
-//             const user = await UserService.
-//         } catch (error) {
-            
-//         }
-//     }
+    async authorization (req: Request, res: Response): Promise<void> {
+        try {
+            const {email, password} = req.body  
+            const user = await UserService.authorization({email, password})
+            res.json(user)
+        } catch (error) {
+            console.error('Ошибка при авторизации:', error);
+            res.status(401).json({message: 'Неверный логин или пароль.', error})
+        }
+    }
     
 //     async getMe (req: Request, res: Response) {
 //         try {
 //             const user = await UserService.
-//         } catch (error) {
+//         } catch (error) {  
             
 //         }
 //     }
 
-//     async update (req: Request, res: Response) {
+//     async update (req: Request, res: Response) {  
 //         try {
 //             const user = await UserService.
 //         } catch (error) {

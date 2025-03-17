@@ -3,6 +3,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import userRouter from './routes/userRouter';
+import postRouter from './routes/postRouter';
 
 
 dotenv.config(); // Загрузка переменных окружения из .env файла
@@ -20,18 +21,8 @@ mongoose
 app.use(cors()); // Middleware для обработки CORS
 app.use(express.json()); // Middleware для парсинга JSON
 
-// Базовый маршрут
-app.get('/', (req, res) => {
-  res.send('Hello from Backend!');
-});
-
 app.use('/', userRouter)
-
-// // Обработка ошибок сервера
-// app.use((err: Error, req: express.Request, res: express.Response, next: express.NextFunction) => {
-//   console.error(err.stack);
-//   res.status(500).json({ message: 'Internal Server Error' });
-// });
+app.use('/', postRouter)
 
 // Запуск сервера
 app.listen(PORT, () => {

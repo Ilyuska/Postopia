@@ -1,47 +1,57 @@
-import { z } from 'zod'
+import bcrypt from 'bcrypt'
 import User from "../models/User";
 import { hashingPassword } from "../utils/hashingPassword";
 import { makingToken } from "../utils/makingToken";
 
 interface IUser {
     email: string;
-    name: string;
+    name?: string;
     password: string;
 }
 
-const registrationSchema = z.object({
-    email: z.string().email("Некорректный email"),
-    name: z.string().min(2, "Имя должно содержать минимум 2 символа"),
-    password: z.string().min(6, "Пароль должен содержать минимум 6 символов"),
-});
 
 class UserService {
     async registration(user: IUser) {
-        try {
-            const validatedUser = registrationSchema.parse(user);
+        const hash = await hashingPassword(user.password);
+        const doc = new User({
+            email: user.email,
+            name: user.name,
+            passwordHash: hash, // Захэшированный пароль
+        });
 
-            const hash = await hashingPassword(validatedUser.password);
-            const doc = new User({
-                email: validatedUser.email,
-                name: validatedUser.name,
-                passwordHash: hash, // Захэшированный пароль
-            });
+        const savedUser = await doc.save();
 
-            const savedUser = await doc.save();
-
-            const token = makingToken(savedUser._id.toString());
-
-            const { passwordHash, createdAt, updatedAt, ...userData } = savedUser.toObject();
-
-            return {
-                ...userData,
-                token,
-            };
-        } catch (error) {
-            console.error('Ошибка при регистрации:', error);
-            throw new Error('Не удалось зарегистрировать пользователя');
-        }
+        const { passwordHash, createdAt, updatedAt, ...userData } = savedUser.toObject();
+        const token = makingToken(savedUser._id.toString());
+   
+        return {
+            ...userData,
+            token,
+        };
     }
+
+
+    async authorization (user: IUser) {
+        const findedUser = await User.findOne({email: user.email}) //Ищем пользователя по имейлу
+
+        if (!findedUser) {
+            throw new Error('Неверный логин или пароль');
+        } //Проверка существования пользователья
+
+        const isValidPassword = await bcrypt.compare(user.password, findedUser.passwordHash)
+
+        if (!isValidPassword) {
+            throw new Error('Неверный логин или пароль');
+        }
+
+        const { passwordHash, createdAt, updatedAt, ...userData } = findedUser.toObject();
+        const token = makingToken(findedUser._id.toString());
+
+        return {
+            ...userData,
+            token,
+        }
+    }    
 }
 
 export default new UserService();
