@@ -51,7 +51,59 @@ class UserService {
             ...userData,
             token,
         }
-    }    
+    }   
+    
+    async getById (id: string) {
+        const findedUser = await User.findById({_id: id})
+
+        if (!findedUser) {
+            throw new Error('Пользователь не найден');
+        } 
+
+        const { passwordHash, createdAt, updatedAt, email, ...userData } = findedUser.toObject();
+
+        return {
+            ...userData
+        }
+    }
+
+    async getMe(userId: string | undefined) {
+        const findedUser = await User.findById({_id: userId})
+
+        if (!findedUser) {
+            throw new Error('Пользователь не найден');
+        } 
+
+        const { passwordHash, createdAt, updatedAt, email, ...userData } = findedUser.toObject();
+
+        return {
+            ...userData
+        }
+    }
+
+    async update(id:string | undefined, user) {
+        const updatedUser =  await User.findByIdAndUpdate(id, {...user}, {new: true})
+
+        if (!updatedUser) {
+            throw new Error('Пользователь не найден');
+        } 
+
+        const { passwordHash, createdAt, updatedAt, email, ...userData } = updatedUser.toObject();
+
+        return {
+            ...userData
+        }
+    }
+
+    async delete (id: string | undefined) {
+        const deletedUser = await User.findByIdAndDelete(id)
+
+        if (!deletedUser) {
+            throw new Error('Пользователь не найден');
+        } 
+
+        return {message: 'Ваш аккаунт удален'}
+    }
 }
 
 export default new UserService();

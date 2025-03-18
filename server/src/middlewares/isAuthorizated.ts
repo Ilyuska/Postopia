@@ -19,9 +19,9 @@ export const isAuthorizated = (req: Request, res: Response, next: NextFunction) 
             req.userId = decoded._id; //Записываем id найденного пользователя в userId
             next() //Переходим к след функции
         } catch (e) {
-            res.status(403).json({message: 'Нет доступа'})
+            res.status(403).json({message: 'Пользователь не авторизирован'})
         }
     } else {
-        res.status(403).json({message: 'Нет доступа'})
+        res.status(403).json({message: 'Пользователь не авторизирован'})
     }
 }

@@ -15,7 +15,10 @@ const UserSchema = new mongoose.Schema({
         required: true
     },
     avatar: String, //Будет не обязательным
-    posts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Post' }]
+    posts: [{
+        type: mongoose.Schema.Types.ObjectId, 
+        ref: 'Post' 
+    }]
 }, {
     timestamps: true, //Добавляем время создания пользователя (И редактирования)
 });

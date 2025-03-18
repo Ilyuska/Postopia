@@ -23,38 +23,49 @@ class UserController {
             res.status(401).json({message: 'Неверный логин или пароль.', error})
         }
     }
+
+    async getById (req: Request, res: Response) {
+        try {
+            const id = req.params.id
+            const user = await UserService.getById(id)
+            res.status(200).json(user)
+        } catch (error) {
+            console.error('Пользователь не найден:', error);
+            res.status(404).json({message: 'Пользователь не найден', error})
+        }
+    }
     
-//     async getMe (req: Request, res: Response) {
-//         try {
-//             const user = await UserService.
-//         } catch (error) {  
-            
-//         }
-//     }
+    async getMe (req: Request, res: Response) {
+        try {
+            const user = await UserService.getMe(req.userId)
+            res.status(200).json(user)
+        } catch (error) {  
+            console.error('Пользователь не найден:', error);
+            res.status(404).json({message: 'Пользователь не найден', error})
+        }
+    }
 
-//     async update (req: Request, res: Response) {  
-//         try {
-//             const user = await UserService.
-//         } catch (error) {
-            
-//         }
-//     }
+    async update (req: Request, res: Response) {  
+        try {
+            const user = await UserService.update(req.userId, req.body)
+            res.status(200).json(user)
+        } catch (error) {
+            console.error('Пользователь не найден:', error);
+            res.status(404).json({message: 'Пользователь не найден', error})
+        }
+    }
 
-//     async delete (req: Request, res: Response) {
-//         try {
-//             const user = await UserService.
-//         } catch (error) {
-            
-//         }
-//     }
+    async delete (req: Request, res: Response) {
+        try {
+            const message = await UserService.delete(req.userId)
+            res.status(200).json(message)
+        } catch (error) {
+            console.error('Пользователь не найден:', error);
+            res.status(404).json({message: 'Пользователь не найден', error})
+        }
+    }
 
-//     async getId (req: Request, res: Response) {
-//         try {
-//             const user = await UserService.
-//         } catch (error) {
-            
-//         }
-//     }
+
 }
 
 export default new UserController();
