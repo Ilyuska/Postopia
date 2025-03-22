@@ -1,8 +1,13 @@
-import mongoose from "mongoose";
+import  { Schema, Document, model } from 'mongoose';
 
-const CommentSchema = new mongoose.Schema({
+interface IComment extends Document {
+    user: Schema.Types.ObjectId,
+    message: string
+}
+
+const CommentSchema = new Schema<IComment>({
     user: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: Schema.Types.ObjectId,
         ref: 'User',
         required: true
     }, 
@@ -14,4 +19,4 @@ const CommentSchema = new mongoose.Schema({
     timestamps: true, //Добавляем время создания комментария (И редактирования)
 })
 
-export default mongoose.model('Comment', CommentSchema);
+export default model<IComment>('Comment', CommentSchema);

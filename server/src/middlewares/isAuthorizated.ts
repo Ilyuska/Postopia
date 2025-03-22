@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
+import { Types } from 'mongoose';
 import jwt from 'jsonwebtoken'
 import dotenv from 'dotenv';
 
@@ -6,7 +7,7 @@ dotenv.config(); // Загружаем переменные из .env
 
 declare module 'express' {
     interface Request {
-        userId?: string;
+        userId?: Types.ObjectId;
     }
 }
 
@@ -15,13 +16,14 @@ export const isAuthorizated = (req: Request, res: Response, next: NextFunction) 
 
     if (token){
         try {
-            const decoded = jwt.verify(token, process.env.JWT_SECRET || 'fallbackSecretKey'); //Сравниваем есть ли расшифровка токена среди наших id и сохраняем пользователя в decoded
-            req.userId = decoded._id; //Записываем id найденного пользователя в userId
+            const decoded = jwt.verify(token, process.env.JWT_SECRET) as { _id: Types.ObjectId }; // Декодируем токен
+            req.userId = decoded._id; // Используем как есть
+
             next() //Переходим к след функции
         } catch (e) {
             res.status(403).json({message: 'Пользователь не авторизирован'})
         }
     } else {
-        res.status(403).json({message: 'Пользователь не авторизирован'})
+        res.status(403).json({message: 'Пользователь не авторизирован '})
     }
 }

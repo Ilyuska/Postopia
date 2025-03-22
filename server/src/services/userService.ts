@@ -1,3 +1,4 @@
+import { Types } from 'mongoose';
 import bcrypt from 'bcrypt'
 import User from "../models/User";
 import { hashingPassword } from "../utils/hashingPassword";
@@ -17,12 +18,13 @@ class UserService {
             email: user.email,
             name: user.name,
             passwordHash: hash, // Захэшированный пароль
+            posts: []
         });
 
         const savedUser = await doc.save();
 
         const { passwordHash, createdAt, updatedAt, ...userData } = savedUser.toObject();
-        const token = makingToken(savedUser._id.toString());
+        const token = makingToken(savedUser.id.toString());
    
         return {
             ...userData,
@@ -45,29 +47,16 @@ class UserService {
         }
 
         const { passwordHash, createdAt, updatedAt, ...userData } = findedUser.toObject();
-        const token = makingToken(findedUser._id.toString());
+        const token = makingToken(findedUser.id.toString());
 
         return {
             ...userData,
             token,
         }
     }   
+
     
-    async getById (id: string) {
-        const findedUser = await User.findById({_id: id})
-
-        if (!findedUser) {
-            throw new Error('Пользователь не найден');
-        } 
-
-        const { passwordHash, createdAt, updatedAt, email, ...userData } = findedUser.toObject();
-
-        return {
-            ...userData
-        }
-    }
-
-    async getMe(userId: string | undefined) {
+    async getById (userId: Types.ObjectId) {
         const findedUser = await User.findById({_id: userId})
 
         if (!findedUser) {
@@ -81,8 +70,24 @@ class UserService {
         }
     }
 
-    async update(id:string | undefined, user) {
-        const updatedUser =  await User.findByIdAndUpdate(id, {...user}, {new: true})
+
+    async getMe(userId: Types.ObjectId) {
+        const findedUser = await User.findById({_id: userId})
+
+        if (!findedUser) {
+            throw new Error('Пользователь не найден');
+        } 
+
+        const { passwordHash, createdAt, updatedAt, email, ...userData } = findedUser.toObject();
+
+        return {
+            ...userData
+        }
+    }
+
+
+    async update(userId: Types.ObjectId, user) {
+        const updatedUser =  await User.findByIdAndUpdate(userId, {...user}, {new: true})
 
         if (!updatedUser) {
             throw new Error('Пользователь не найден');
@@ -95,8 +100,9 @@ class UserService {
         }
     }
 
-    async delete (id: string | undefined) {
-        const deletedUser = await User.findByIdAndDelete(id)
+    
+    async delete (userId: Types.ObjectId) {
+        const deletedUser = await User.findByIdAndDelete(userId)
 
         if (!deletedUser) {
             throw new Error('Пользователь не найден');

@@ -1,6 +1,14 @@
-import mongoose from "mongoose";
-     
-const PostSchema = new mongoose.Schema({
+import  { Schema, Document, Types, model } from 'mongoose';
+
+ export interface IPost extends Document {
+    title: string;
+    message: string;
+    likes: Types.ObjectId[];
+    user: Types.ObjectId;
+    comments: Types.ObjectId[];
+}
+
+const PostSchema: Schema = new Schema<IPost>({
     title: {
         type: String,
         required: true
@@ -9,21 +17,22 @@ const PostSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    likes: {
-        type: Number,
-        default: 0
-    },
-    user: {
-        type: mongoose.Schema.Types.ObjectId,
+    likes:  [{ 
+        type: Schema.Types.ObjectId, 
         ref: 'User',
-        required: true // Пост должен быть связан с пользователем
+        default: [],
+    }],
+    user: {
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
     },
     comments: [{ 
-        type: mongoose.Schema.Types.ObjectId, 
+        type: Schema.Types.ObjectId, 
         ref: 'Comment' 
     }]
 }, {
-    timestamps: true, //Добавляем время создания поста (И редактирования)
+    timestamps: true,
 });
 
-export default mongoose.model('Post', PostSchema); 
+export default model<IPost>('Post', PostSchema);

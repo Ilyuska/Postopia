@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import { ObjectId, Types } from 'mongoose';
 import UserService from '../services/userService';
 
 class UserController {
@@ -13,6 +14,7 @@ class UserController {
         }
     }
 
+
     async authorization (req: Request, res: Response): Promise<void> {
         try {
             const {email, password} = req.body  
@@ -24,9 +26,10 @@ class UserController {
         }
     }
 
+
     async getById (req: Request, res: Response) {
         try {
-            const id = req.params.id
+            const id = new Types.ObjectId(req.params.id)
             const user = await UserService.getById(id)
             res.status(200).json(user)
         } catch (error) {
@@ -34,38 +37,52 @@ class UserController {
             res.status(404).json({message: 'Пользователь не найден', error})
         }
     }
+   
     
     async getMe (req: Request, res: Response) {
         try {
-            const user = await UserService.getMe(req.userId)
-            res.status(200).json(user)
+            if (req.userId) {
+                const user = await UserService.getMe(req.userId)
+                res.status(200).json(user)
+            } else {
+                res.status(401).json('Пользователь не авторизован')
+            }
+            
         } catch (error) {  
             console.error('Пользователь не найден:', error);
             res.status(404).json({message: 'Пользователь не найден', error})
         }
     }
 
+
     async update (req: Request, res: Response) {  
         try {
-            const user = await UserService.update(req.userId, req.body)
-            res.status(200).json(user)
+            if (req.userId) {
+                const user = await UserService.update(req.userId, req.body)
+                res.status(200).json(user)
+            } else {
+                res.status(401).json({message: "Пользователь не авторизован"})
+            }
         } catch (error) {
             console.error('Пользователь не найден:', error);
             res.status(404).json({message: 'Пользователь не найден', error})
         }
     }
+
 
     async delete (req: Request, res: Response) {
         try {
-            const message = await UserService.delete(req.userId)
-            res.status(200).json(message)
+            if (req.userId) {
+                const message = await UserService.delete(req.userId)
+                res.status(200).json(message)
+            } else {
+                res.status(401).json({message: "Пользователь не авторизован"})
+            }   
         } catch (error) {
             console.error('Пользователь не найден:', error);
             res.status(404).json({message: 'Пользователь не найден', error})
         }
     }
-
-
 }
 
 export default new UserController();
