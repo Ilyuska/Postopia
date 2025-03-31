@@ -1,0 +1,22 @@
+header {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 10px;
+    height: 60px;
+    background-color: beige;
+
+    .searching {
+        width: 50%;
+        height: 50px;
+        background-color: white;
+        display: grid;
+        grid-template-columns: 9fr 0.75fr;
+        align-items: center;
+        padding: 4px 4px 4px 25px;
+        border-radius: 30px;
+    }
+}
+
+

@@ -1,5 +1,4 @@
 import {FC} from 'react'
-import styles from './styles.scss'
 
 interface IRegisterFormProps {
 
