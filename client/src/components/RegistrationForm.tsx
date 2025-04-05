@@ -1,6 +1,7 @@
 import {FC, useState, useContext} from 'react'
 import { AuthContext } from '../contexts';
-import { loginAPI } from '../api/mainAPI';
+import { registrationAPI } from '../api/mainAPI';
+import { IRegisterData } from '../interfaces/IUser';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Dialog from '@mui/material/Dialog';
@@ -9,35 +10,29 @@ import DialogContent from '@mui/material/DialogContent';
 import CloseIcon from '@mui/icons-material/Close';
 import DialogTitle from '@mui/material/DialogTitle';
 import { IconButton } from '@mui/material';
-import { ILoginData } from '../interfaces/IUser';
 
 
-const LoginForm: FC = () => {
+const RegistrationForm: FC = () => {
   const {login} = useContext(AuthContext)
   const [open, setOpen] = useState<boolean>(false);
-  const [loginData, setLoginData] = useState<ILoginData>({email: "", password: ""})
-  const [loginError, setLoginError] = useState<ILoginData>({email: "", password:""})
+  const [registerData, setRegisterData] = useState<IRegisterData>({email: "", password: "", name:""})
+  const [registerError, setRegisterError] = useState<IRegisterData>({email: "", password: "", name:""})
 
-  const handleClickOpen = () => {
+  const handleOpen = () => {
     setOpen(true);
   };
 
   const handleClose = () => {
     setOpen(false);
-    setLoginError({email: "", password:""})
+    setRegisterError({email: "", password: "", name:""})
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (loginData.password.length < 6) {
-      setLoginError({ email: "", password: "Минимум 6 символов" });
-      return;
-    }
 
-    const token = await loginAPI(loginData);
+    const token = await registrationAPI(registerData);
     if (token instanceof Object) {
-      setLoginError(token)
+      setRegisterError(token)
     } else {
       login(token);
       handleClose();
@@ -47,8 +42,8 @@ const LoginForm: FC = () => {
 
   return (
     <>
-      <Button variant="outlined" onClick={handleClickOpen} sx={{color: '#ffffff', borderColor: '#ffffff'}}>
-        Log in
+      <Button variant="outlined" onClick={handleOpen} sx={{color: '#ffffff', borderColor: '#ffffff'}}>
+        Sign up
       </Button>
       <Dialog
         open={open}
@@ -57,7 +52,7 @@ const LoginForm: FC = () => {
         onSubmit= {handleSubmit}
       >
         <DialogTitle sx={{textAlign: 'center'}} >
-          Log In
+          Sign up
         </DialogTitle>
         <IconButton
           aria-label="close"
@@ -73,6 +68,19 @@ const LoginForm: FC = () => {
         </IconButton>
 
         <DialogContent>
+        <TextField
+            autoFocus
+            required
+            margin="dense"
+            name="name"
+            label="Name"
+            type="name"
+            fullWidth
+            variant="standard"
+            error = {!!registerError.name}
+            helperText={registerError.name}
+            onChange={(e)=>setRegisterData({...registerData, name: e.target.value})}
+          />
           <TextField
             autoFocus
             required
@@ -82,9 +90,9 @@ const LoginForm: FC = () => {
             type="email"
             fullWidth
             variant="standard"
-            error = {!!loginError.email}
-            helperText={loginError.email}
-            onChange={(e)=>setLoginData({...loginData, email: e.target.value})}
+            error = {!!registerError.email}
+            helperText={registerError.email}
+            onChange={(e)=>setRegisterData({...registerData, email: e.target.value})}
           />
           <TextField
             autoFocus
@@ -94,20 +102,20 @@ const LoginForm: FC = () => {
             label="Password"
             type="password"
             fullWidth
-            error={!!loginError.password}
-            helperText={loginError.password}
+            error={!!registerError.password}
+            helperText={registerError.password}
             variant="standard"
-            onChange={(e)=>setLoginData({...loginData, password: e.target.value})}
+            onChange={(e)=>setRegisterData({...registerData, password: e.target.value})}
           />
         </DialogContent>
 
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
-          <Button type="submit">Login</Button>
+          <Button type="submit">Sign Up</Button>
         </DialogActions>
       </Dialog>
     </>
   );
 };
 
-export default LoginForm;
+export default RegistrationForm;

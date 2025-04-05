@@ -4,18 +4,29 @@ header {
     justify-content: space-between;
     align-items: center;
     padding: 0 10px;
-    height: 60px;
-    background-color: beige;
+    height: 65px;
+
+    .logo {
+        font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+        font-weight: 500;
+        font-size: 20px;
+        :hover{
+            text-decoration: underline;
+        }
+    }
 
     .searching {
-        width: 50%;
+        width: 60%;
         height: 50px;
-        background-color: white;
-        display: grid;
-        grid-template-columns: 9fr 0.75fr;
+        display: flex;
         align-items: center;
         padding: 4px 4px 4px 25px;
         border-radius: 30px;
+    }
+
+    .settings{
+        display: flex;
+        justify-content: space-between;
     }
 }
 

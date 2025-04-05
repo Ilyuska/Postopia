@@ -1,14 +1,20 @@
 import {FC, useEffect} from 'react'
 import MyRoutes from './routes/MyRoutes'
 import AuthProvider from './contexts/AuthProvider';
+import MyThemeProvider from './contexts/ThemeProvider';
 
 
 const App: FC = ({}) => {
-  useEffect(()=>{}, [localStorage.getItem])
+  useEffect(()=>{}, [localStorage])
+
+
+
   return (
-    <AuthProvider>
-      <MyRoutes/>
-    </AuthProvider>
+    <MyThemeProvider>
+      <AuthProvider>
+        <MyRoutes />
+      </AuthProvider>
+      </MyThemeProvider>
   );
 };
 

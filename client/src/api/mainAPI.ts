@@ -1,13 +1,14 @@
 import axios from 'axios'
+import { ILoginData, IRegisterData } from '../interfaces/IUser'
 
 const BACKEND_LINK = "http://localhost:3000/"
 
 axios.defaults.baseURL = BACKEND_LINK
 
 
-export const loginAPI = async (data: { email: string; password: string }):Promise<string> => {
+export const loginAPI = async (data: ILoginData):Promise<string | ILoginData> => {
     try {
-        const response = await axios.post<{token: string}>(
+        const response = await axios.post(
             'login',
             {...data}, // Axios автоматически преобразует в JSON
           );
@@ -17,9 +18,35 @@ export const loginAPI = async (data: { email: string; password: string }):Promis
     } catch (error) {
         if (axios.isAxiosError(error)) {
             // Если сервер возвращает сообщение в response.data.message
-            const errorMessage = error.response?.data?.message || 'Неверные учетные данные';
-            console.error(errorMessage)
-            return ('Неверные данные')
+            const errorMessage = error.response?.data?.message || 'Неверные данные';
+            return ({email: errorMessage, password: errorMessage})
+        } else {
+            throw new Error('Произошла неизвестная ошибка');
+        }
+    }
+}
+
+
+export const registrationAPI = async (data: IRegisterData):Promise <string | IRegisterData> => {
+    try {
+        const response = await axios.post('registration', {...data});
+      
+          return response.data.token
+    } catch (error) {
+        if (axios.isAxiosError(error)) {
+            const errorMessage = error.response?.data?.errors || 'Неверные данные';
+            let errorObj: IRegisterData = {email: "", password: "", name: ""}
+
+            errorMessage.map((i:{field: string, message: string}) => {
+                if (i.field == "email") {
+                    errorObj.email = i.message
+                } else if (i.field == "password") {
+                    errorObj.password = i.message
+                } else {
+                    errorObj.name = i.message
+                }
+            })
+            return (errorObj)
         } else {
             throw new Error('Произошла неизвестная ошибка');
         }

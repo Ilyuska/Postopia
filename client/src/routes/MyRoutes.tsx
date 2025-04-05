@@ -7,15 +7,15 @@ import Profile from '../pages/Profile';
 
 
 
-const MyRoutes: FC = ({}) => {
+const MyRoutes: FC = () => {
   return (
     <BrowserRouter>
-    <Routes>
-      <Route path="/" element={<Layout />}>
-        <Route index element={<Home />} />
-        <Route path="posts" element={<Posts />} />
-        <Route path="profile" element={<Profile />} />
-      </Route>
+      <Routes>
+        <Route path="/" element={<Layout />}>
+          <Route index element={<Home />} />
+          <Route path="posts" element={<Posts />} />
+          <Route path="profile" element={<Profile />} />
+        </Route>
       </Routes>
     </BrowserRouter>
   );

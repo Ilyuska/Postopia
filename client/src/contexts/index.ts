@@ -1,4 +1,6 @@
 import { createContext } from "react";
+import { ITheme } from "../interfaces/ITheme";
+
 interface AuthContextType {
     isAuth: boolean;
     token: string;
@@ -13,3 +15,8 @@ interface AuthContextType {
     login: () => {},
     logout: () => {},
   });
+
+  export const MyThemeContext = createContext<ITheme>({
+    isDarkTheme: false,
+    toggleTheme: ()=>{},
+  })
