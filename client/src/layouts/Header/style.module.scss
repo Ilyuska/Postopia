@@ -1,9 +1,10 @@
 header {
+    position: fixed;
     width: 100%;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0 10px;
+    padding: 0 15px;
     height: 65px;
 
     .logo {

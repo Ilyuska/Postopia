@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { ILoginData, IRegisterData } from '../interfaces/IUser'
+import { IPost } from '../interfaces/IPost'
 
 const BACKEND_LINK = "http://localhost:3000/"
 
@@ -30,8 +31,7 @@ export const loginAPI = async (data: ILoginData):Promise<string | ILoginData> =>
 export const registrationAPI = async (data: IRegisterData):Promise <string | IRegisterData> => {
     try {
         const response = await axios.post('registration', {...data});
-      
-          return response.data.token
+        return response.data.token
     } catch (error) {
         if (axios.isAxiosError(error)) {
             const errorMessage = error.response?.data?.errors || 'Неверные данные';
@@ -50,5 +50,16 @@ export const registrationAPI = async (data: IRegisterData):Promise <string | IRe
         } else {
             throw new Error('Произошла неизвестная ошибка');
         }
+    }
+}
+
+
+export const getAllPosts = async () => {
+    try {
+        const response = await axios.get<IPost[]>('posts')
+
+        return response.data as IPost[]
+    } catch (error) {
+        console.error(error)
     }
 }

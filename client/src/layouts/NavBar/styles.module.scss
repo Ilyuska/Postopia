@@ -1,0 +1,22 @@
+.navBar {
+    width: 200px;
+    position: fixed;
+    top: 70px;
+    left: 50px;
+    border: 0;
+    
+
+    .imgBtn {
+        display: flex;
+        justify-content: center;
+        align-items: start;
+        gap: 8px;
+        padding: 8px 0px;
+        // color: var(--mui-palette-text-primary);
+    }
+
+    .create {
+        width: 100%;
+        margin-top: 10px;
+    }
+}

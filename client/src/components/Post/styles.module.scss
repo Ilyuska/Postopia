@@ -1,0 +1,38 @@
+.post{
+    
+    .person{
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        padding: 10px;
+        border-radius: 25px 25px 0 0 ;
+    }
+
+    .mainContent {
+        border-radius: 0 0 25px 25px; 
+        padding: 10px;
+
+        .image {
+
+        }
+
+        .text {
+            .title {
+                margin: 0;
+            }
+    
+            .message {
+    
+            }  
+        }
+    
+        .likes, .comments {
+            display: flex;
+            gap: 2px;
+            align-items: center;
+            font-size: 16px;
+        }
+    }
+
+    
+}

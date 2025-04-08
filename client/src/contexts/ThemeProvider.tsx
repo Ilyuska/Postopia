@@ -21,7 +21,7 @@ const MyThemeProvider: FC<MyThemeProviderProps> = ({ children }) => {
             contrastText: '#fff',
           },
           secondary: {
-            main: '#2196f3',   // Голубой (доп. акценты)
+            main: '#bbdefb',  // Голубой (доп. акценты)
             contrastText: '#fff',
           },
           text: {
@@ -44,7 +44,7 @@ const MyThemeProvider: FC<MyThemeProviderProps> = ({ children }) => {
             contrastText: '#0a1929',
           },
           secondary: {
-            main: '#64b5f6',    // Яркий голубой
+            main: '#bbdefb',    // Яркий голубой
             contrastText: '#0a1929',
           },
           text: {
