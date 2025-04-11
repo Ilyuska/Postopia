@@ -1,12 +1,14 @@
 import { Request, Response } from 'express';
-import { ObjectId, Types } from 'mongoose';
+import { Types } from 'mongoose';
 import UserService from '../services/userService';
+
 
 class UserController {
     async registration (req: Request, res: Response): Promise<void> {
         try {
-            const {name, email, password} = req.body           
-            const user = await UserService.registration({name, email, password})
+            const {name, email, password} = req.body
+            const avatar = req.file ? `/avatars/${req.file.filename}` : undefined;         
+            const user = await UserService.registration({name, email, password, avatar})
             res.status(201).json(user)
         } catch (error) {
             console.error('Ошибка при регистрации:', error);
@@ -58,7 +60,9 @@ class UserController {
     async update (req: Request, res: Response) {  
         try {
             if (req.userId) {
-                const user = await UserService.update(req.userId, req.body)
+                const {name} = req.body
+                const avatar = req.file ? `/avatars/${req.file.filename}` : undefined;
+                const user = await UserService.update(req.userId, {name, avatar})
                 res.status(200).json(user)
             } else {
                 res.status(401).json({message: "Пользователь не авторизован"})

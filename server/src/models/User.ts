@@ -26,11 +26,13 @@ const UserSchema = new Schema <IUser>({
     },
     avatar: {
         type: String, 
-        required: false
+        required: false,
+        default: ''
     }, //Будет не обязательным
     posts: [{
         type: Types.ObjectId, 
-        ref: 'Post' 
+        ref: 'Post',
+        default: []
     }]
 }, {
     timestamps: true, //Добавляем время создания пользователя (И редактирования)

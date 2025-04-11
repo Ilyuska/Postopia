@@ -9,7 +9,8 @@ const registrationSchema = z.object({
 
 export const registrationValidator = (req: Request, res: Response, next: NextFunction) => {
     try {
-        const validatedUser = registrationSchema.parse(req.body);
+        const { email, name, password } = req.body;
+        const validatedUser = registrationSchema.parse({email, name, password});
         next()
     } catch (error) {
         if (error instanceof z.ZodError) {

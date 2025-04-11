@@ -5,20 +5,27 @@ import { hashingPassword } from "../utils/hashingPassword";
 import { makingToken } from "../utils/makingToken";
 
 interface IUser {
-    email: string;
+    email?: string;
     name?: string;
-    password: string;
+    avatar? : string
 }
 
 
 class UserService {
-    async registration(user: IUser) {
+    async registration(user: IUser & {password: string}) {
+        const findedUser = await User.findOne({email: user.email})
+
+        if (findedUser) {
+            throw new Error('Такой пользователь уже существует')
+        }
+
         const hash = await hashingPassword(user.password);
         const doc = new User({
             email: user.email,
             name: user.name,
             passwordHash: hash, // Захэшированный пароль
-            posts: []
+            posts: [], 
+            avatar: user.avatar
         });
 
         const savedUser = await doc.save();
@@ -33,7 +40,7 @@ class UserService {
     }
 
 
-    async authorization (user: IUser) {
+    async authorization (user: IUser & {password: string}) {
         const findedUser = await User.findOne({email: user.email}) //Ищем пользователя по имейлу
 
         if (!findedUser) {
@@ -86,7 +93,7 @@ class UserService {
     }
 
 
-    async update(userId: Types.ObjectId, user) {
+    async update(userId: Types.ObjectId, user: IUser ) {
         const updatedUser =  await User.findByIdAndUpdate(userId, {...user}, {new: true})
 
         if (!updatedUser) {

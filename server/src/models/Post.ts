@@ -1,6 +1,7 @@
 import  { Schema, Document, Types, model } from 'mongoose';
 
  export interface IPost extends Document {
+    image: string,
     title: string;
     message: string;
     likes: Types.ObjectId[];
@@ -9,6 +10,9 @@ import  { Schema, Document, Types, model } from 'mongoose';
 }
 
 const PostSchema: Schema = new Schema<IPost>({
+    image: {
+        type: String,
+    },
     title: {
         type: String,
         required: true
@@ -17,22 +21,24 @@ const PostSchema: Schema = new Schema<IPost>({
         type: String,
         required: true,
     },
-    likes:  [{ 
-        type: Schema.Types.ObjectId, 
+    likes: [{
+        type: Schema.Types.ObjectId,
         ref: 'User',
-        default: [],
-    }],
+        default: [] // Явно указываем пустой массив по умолчанию
+      }],
     user: {
         type: Schema.Types.ObjectId,
         ref: 'User',
         required: true
     },
-    comments: [{ 
-        type: Schema.Types.ObjectId, 
-        ref: 'Comment' 
-    }]
+    // comments: [{ 
+    //     type: Schema.Types.ObjectId, 
+    //     ref: 'Comment',
+    //     default: [],
+    // }]
 }, {
     timestamps: true,
+    autoIndex: false,
 });
 
 export default model<IPost>('Post', PostSchema);

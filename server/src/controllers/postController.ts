@@ -9,11 +9,9 @@ interface IResponse {
 }
 
 const NotFoundPost = (res: Response, post: IResponse) => {
-    if (!post.success) {
-        res.status(404).json(post.message)
-    } else {
-        res.status(200).json(post.message)
-    }
+    post.success === true ? 
+                res.status(200).json(post.message) :
+                res.status(403).json({ error: post.message })
 }
 
 class PostController {
@@ -52,7 +50,7 @@ class PostController {
             }
         } catch (error) {
             console.error(error)
-            res.status(500).json('Не удалось создать пост')
+            res.status(500).json(error)
         }
     }
 
@@ -77,7 +75,7 @@ class PostController {
     async update (req: Request, res: Response) {
         try {
             const id = new Types.ObjectId(req.params.id)
-            const post = await postService.update(id, req.body)
+            const post = await postService.update(id, req.userId, req.body)
             NotFoundPost(res, post)
         } catch (error) {
             console.error(error)
@@ -89,7 +87,7 @@ class PostController {
     async delete (req: Request, res: Response) {
         try {
             const id = new Types.ObjectId(req.params.id)
-            const post = await postService.delete(id)
+            const post = await postService.delete(id, req.userId)
             NotFoundPost(res, post)
         } catch (error) {
             console.error(error)

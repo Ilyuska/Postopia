@@ -4,6 +4,9 @@ import Post, { IPost } from "../models/Post";
 class PostService {
     async getAll () {
         const posts = await Post.find<IPost[]>()
+            .populate('user', 'name email avatar') // Поля, которые нужно получить
+            .populate('likes', 'name avatar')
+            .exec();
 
         if (!posts) {
             return {message: 'Посты не найдены'};
@@ -32,9 +35,9 @@ class PostService {
             comments: []
         });
         
-        const savedPost = await doc.save();
+        const savedPost = await doc.save()
   
-        return savedPost
+        return savedPost;
     }
 
 
@@ -57,24 +60,30 @@ class PostService {
     }
 
 
-    async update (postId: Types.ObjectId, post: IPost) {
-        const updatedPost = await Post.findByIdAndUpdate<IPost>(postId, { $set: post }, {new: true})
+    async update (postId: Types.ObjectId, userId: Types.ObjectId | undefined, newPost: IPost) {
+        const post = await Post.findOne({ _id: postId, user: userId });
+        if (!post) {
+            return  {success: false, message: 'Вы не можете редактировать пост'}
+        }
 
-        if (!updatedPost) {
-            return { success: false, message: 'Пост не найден' };
-        } 
-
-        return {success: true, message: updatedPost}
+        const updatedPost = await Post.findByIdAndUpdate(
+            postId,
+            { $set: newPost },
+            { new: true }
+        );
+        return updatedPost
+            ? {success: true, message: updatedPost}
+            : { success: false, message: 'Пост не найден после обновления' }
     }
 
 
-    async delete (postId: Types.ObjectId) {
-        const deletedPost = await Post.findByIdAndDelete<IPost>(postId)
-
-        if (!deletedPost) {
-            return { success: false, message: 'Пост не найден' };
+    async delete (postId: Types.ObjectId, userId: Types.ObjectId | undefined) {
+        const post = await Post.findOne({ _id: postId, user: userId });
+        if (!post) {
+            return  {success: false, message: 'Вы не можете удалить пост'}
         }
 
+        const deletedPost = await Post.findByIdAndDelete<IPost>(postId)
         return {success: true, message: 'Ваш пост удален'}
 
     }
