@@ -9,7 +9,7 @@ const Layout: FC = ({}) => {
     <>
         <Header/>
         <NavBar />
-        <Box component='div' sx={{padding: '0 10vw 0 300px;', bgcolor: 'background.default', minHeight: '100vh', paddingTop: '65px'}}>
+        <Box component='div' sx={{padding: '85px 18vw 0 300px;', bgcolor: 'background.default', minHeight: '100vh'}}>
           <Outlet />
         </Box>
     </>

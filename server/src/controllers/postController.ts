@@ -41,9 +41,10 @@ class PostController {
     async create (req: Request, res: Response) {
         try {
             const {title, message} = req.body
+            const image = req.file ? `${req.file.filename}` : '';
 
             if (req.userId) {
-                const post = await postService.create(title, message, req.userId)
+                const post = await postService.create({user: req.userId, title, message, image})
                 res.status(200).json(post)
             } else {
                 res.status(401).json({message: "Пользователь не авторизован"})
@@ -74,9 +75,16 @@ class PostController {
 
     async update (req: Request, res: Response) {
         try {
-            const id = new Types.ObjectId(req.params.id)
-            const post = await postService.update(id, req.userId, req.body)
-            NotFoundPost(res, post)
+            const {title, message} = req.body
+            const postId = new Types.ObjectId(req.params.id)
+            const image = req.file ? `${req.file.filename}` : '';
+
+            if (req.userId) {
+                const post = await postService.update(postId, {user: req.userId, title, message, image})
+                NotFoundPost(res, post)
+            } else {
+                res.status(401).json({message: "Пользователь не авторизован"})
+            }
         } catch (error) {
             console.error(error)
             res.status(500).json('Не удалось обновить пост')

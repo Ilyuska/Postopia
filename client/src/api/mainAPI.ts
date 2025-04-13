@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { ILoginData, IRegisterData } from '../interfaces/IUser'
+import { ILoginData, IRegisterData, IUser } from '../interfaces/IUser'
 import { IPost } from '../interfaces/IPost'
 
 const BACKEND_LINK = "http://localhost:3000/"
@@ -18,8 +18,8 @@ export const loginAPI = async (data: ILoginData):Promise<string | ILoginData> =>
           return response.data.token
     } catch (error) {
         if (axios.isAxiosError(error)) {
-            // Если сервер возвращает сообщение в response.data.message
             const errorMessage = error.response?.data?.message || 'Неверные данные';
+            console.error(error)
             return ({email: errorMessage, password: errorMessage})
         } else {
             throw new Error('Произошла неизвестная ошибка');
@@ -59,6 +59,21 @@ export const getAllPosts = async () => {
         const response = await axios.get<IPost[]>('posts')
 
         return response.data as IPost[]
+    } catch (error) {
+        console.error(error)
+    }
+}
+
+
+export const getMe = async () => {
+    try {
+        const response = await axios.get<IUser>('me', {
+            headers: {
+              'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
+          })
+
+        return response.data as IUser
     } catch (error) {
         console.error(error)
     }

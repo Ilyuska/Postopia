@@ -1,15 +1,9 @@
 import {FC, useState, useContext} from 'react'
 import { AuthContext } from '../contexts';
 import { loginAPI } from '../api/mainAPI';
-import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import CloseIcon from '@mui/icons-material/Close';
-import DialogTitle from '@mui/material/DialogTitle';
-import { IconButton } from '@mui/material';
 import { ILoginData } from '../interfaces/IUser';
+import { Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle, IconButton } from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
 
 
 const LoginForm: FC = () => {

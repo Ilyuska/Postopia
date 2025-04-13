@@ -1,10 +1,17 @@
 import { Types } from "mongoose";
 import Post, { IPost } from "../models/Post";
 
+interface ICreatePost {
+    user: Types.ObjectId | undefined
+    title: string,
+    message: string,
+    image?: string
+}
+
 class PostService {
     async getAll () {
         const posts = await Post.find<IPost[]>()
-            .populate('user', 'name email avatar') // Поля, которые нужно получить
+            .populate('user', 'name avatar') // Поля, которые нужно получить
             .populate('likes', 'name avatar')
             .exec();
 
@@ -26,12 +33,13 @@ class PostService {
     }
 
 
-    async create (postTitle: string, postMessage: string, userId: Types.ObjectId) {
+    async create (post: ICreatePost) {
         const doc = new Post({
-            title: postTitle,
-            message: postMessage,
+            user: post.user,
+            title: post.title,
+            message: post.message,
+            image: post.image,
             likes: [],
-            user: userId,
             comments: []
         });
         
@@ -60,8 +68,8 @@ class PostService {
     }
 
 
-    async update (postId: Types.ObjectId, userId: Types.ObjectId | undefined, newPost: IPost) {
-        const post = await Post.findOne({ _id: postId, user: userId });
+    async update (postId: Types.ObjectId, newPost: ICreatePost) {
+        const post = await Post.findOne({ _id: postId, user: newPost.user });
         if (!post) {
             return  {success: false, message: 'Вы не можете редактировать пост'}
         }

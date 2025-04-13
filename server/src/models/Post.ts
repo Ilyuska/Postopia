@@ -12,6 +12,7 @@ import  { Schema, Document, Types, model } from 'mongoose';
 const PostSchema: Schema = new Schema<IPost>({
     image: {
         type: String,
+        default: ''
     },
     title: {
         type: String,

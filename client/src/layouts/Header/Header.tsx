@@ -1,4 +1,4 @@
-import {FC, useContext} from 'react'
+import {FC, useContext, useState} from 'react'
 import { Link } from 'react-router-dom';
 import {AuthContext, MyThemeContext} from '../../contexts/index.ts';
 import RegistrationForm from '../../components/RegistrationForm.tsx';
@@ -9,11 +9,14 @@ import SearchIcon from '@mui/icons-material/Search';
 import DarkModeOutlinedIcon from '@mui/icons-material/DarkModeOutlined';
 import LightModeOutlinedIcon from '@mui/icons-material/LightModeOutlined';
 import style from "./style.module.scss"
+import BurgerMenu from '../../components/BurgerMenu/BurgerMenu.tsx';
 
 const Header: FC = ({}) => {
   const { isAuth } = useContext(AuthContext);
   const {isDarkTheme, toggleTheme} = useContext(MyThemeContext)
+  const [burgerOpen, setBurgerOpen] = useState<boolean>(false)
 
+  const burgerSwitch = () => setBurgerOpen(!burgerOpen)
 
   return (
       <Box 
@@ -36,11 +39,12 @@ const Header: FC = ({}) => {
         <div className={style.settings}>
           <Button sx={{color: 'white'}} onClick={() => toggleTheme()}> {isDarkTheme?  <DarkModeOutlinedIcon/>: <LightModeOutlinedIcon/> }</Button>
           {isAuth ? (
-            <Link to="/profile">
-            <Avatar>
-              <PersonIcon />
-            </Avatar>
-            </Link>
+            <>
+              <Avatar onClick={burgerSwitch}>
+                <PersonIcon />
+              </Avatar>
+              <BurgerMenu status = {burgerOpen} setStatus={burgerSwitch}/>
+            </>
           ) : (
             <ButtonGroup >
               <LoginForm />

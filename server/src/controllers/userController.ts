@@ -3,16 +3,41 @@ import { Types } from 'mongoose';
 import UserService from '../services/userService';
 
 
+function AuthError (error, res: Response): void {
+    if (error instanceof Error) {
+        if (error.message === "Такой пользователь уже существует") {
+            res.status(400).json({ message: error.message });
+            return;
+        }
+
+        if (error.message === "Неверный логин или пароль") {
+            res.status(401).json({ message: error.message });
+            return;
+        }
+
+        if (error.message === "Пользователь не найден") {
+            res.status(404).json({message: error.message})
+            return;
+        }
+        
+    }
+    res.status(500).json({
+        message: 'Ошибка с нашей стороны. Попробуйте позже',
+    });
+}
+
+
 class UserController {
     async registration (req: Request, res: Response): Promise<void> {
         try {
             const {name, email, password} = req.body
-            const avatar = req.file ? `/avatars/${req.file.filename}` : undefined;         
+            const avatar = req.file ? `${req.file.filename}` : undefined;
+            if (avatar == undefined) console.error('photo??')    
             const user = await UserService.registration({name, email, password, avatar})
             res.status(201).json(user)
         } catch (error) {
             console.error('Ошибка при регистрации:', error);
-            res.status(500).json({message: 'Ошибка с нашей стороны. Попробуйте позже', error})
+            AuthError(error, res)
         }
     }
 
@@ -24,7 +49,7 @@ class UserController {
             res.json(user)
         } catch (error) {
             console.error('Ошибка при авторизации:', error);
-            res.status(401).json({message: 'Неверный логин или пароль.', error})
+            AuthError(error, res)
         }
     }
 
@@ -36,7 +61,7 @@ class UserController {
             res.status(200).json(user)
         } catch (error) {
             console.error('Пользователь не найден:', error);
-            res.status(404).json({message: 'Пользователь не найден', error})
+            AuthError(error, res)
         }
     }
    
@@ -52,7 +77,7 @@ class UserController {
             
         } catch (error) {  
             console.error('Пользователь не найден:', error);
-            res.status(404).json({message: 'Пользователь не найден', error})
+            AuthError(error, res)
         }
     }
 
@@ -69,7 +94,7 @@ class UserController {
             }
         } catch (error) {
             console.error('Пользователь не найден:', error);
-            res.status(404).json({message: 'Пользователь не найден', error})
+            AuthError(error, res)
         }
     }
 
@@ -84,7 +109,7 @@ class UserController {
             }   
         } catch (error) {
             console.error('Пользователь не найден:', error);
-            res.status(404).json({message: 'Пользователь не найден', error})
+            AuthError(error, res)
         }
     }
 }

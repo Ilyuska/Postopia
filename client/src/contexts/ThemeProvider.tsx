@@ -26,7 +26,7 @@ const MyThemeProvider: FC<MyThemeProviderProps> = ({ children }) => {
           },
           text: {
             primary: '#212121', // Темно-серый (основной текст)
-            secondary: '#757575',
+            secondary: '#e0e0e0',
           },
         },
       });
@@ -49,7 +49,7 @@ const MyThemeProvider: FC<MyThemeProviderProps> = ({ children }) => {
           },
           text: {
             primary: '#e0e0e0', // Светло-серый (текст)
-            secondary: '#b0b0b0',
+            secondary: '#212121',
           },
         },
       });

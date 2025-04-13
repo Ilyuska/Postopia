@@ -22,6 +22,7 @@ mongoose
 // Middleware
 app.use(cors()); //Для обработки запросов с Frontend
 app.use(express.json()); // Парсинг JSON файлов
+app.use('/uploads', express.static('uploads')); //Делает папку с изображениями доступной всем
 
 //Подключаем свои routes
 app.use('/', userRouter)

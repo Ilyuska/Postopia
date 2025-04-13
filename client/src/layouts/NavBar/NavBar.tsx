@@ -1,14 +1,15 @@
-import {FC} from 'react'
+import {FC, useContext} from 'react'
 import { Link } from 'react-router-dom';
-import { Avatar, Box, Button, ButtonGroup } from '@mui/material';
-import styles from './styles.module.scss'
-// import PostAddIcon from '@mui/icons-material/PostAdd';
+import { AuthContext } from '../../contexts';
+import CreatePostForm from '../../components/CreatePostForm/CreatePostForm';
+import { Box, Button } from '@mui/material';
 import PersonIcon from '@mui/icons-material/Person';
 import ReorderIcon from '@mui/icons-material/Reorder';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
 import InsertDriveFileOutlinedIcon from '@mui/icons-material/InsertDriveFileOutlined';
-import AddIcon from '@mui/icons-material/Add';
+import styles from './styles.module.scss'
+
 
 
 const NavBar: FC = () => {
@@ -19,8 +20,10 @@ const NavBar: FC = () => {
     justifyContent: 'start'
   }
 
+  const {isAuth} = useContext(AuthContext)
+
   return (
-    <div className={styles.navBar}>
+    <div className={styles.navBar} style={isAuth? {display:'block'}: {display: 'none'}}>
       <Box sx={{ display: 'flex', flexDirection: 'column'}}>
         <Button sx={{color: 'text.primary', ...alignButtons }}> 
           <Link to='/profile' className={styles.imgBtn} style={{ color: 'inherit' }}> 
@@ -46,16 +49,13 @@ const NavBar: FC = () => {
           </Link>
         </Button>
         <Button sx={{color: 'text.primary', ...alignButtons}}> 
-          <Link to='/notifications' className={styles.imgBtn} style={{ color: 'inherit' }}>
+          <Link to='/drafts' className={styles.imgBtn} style={{ color: 'inherit' }}>
             <InsertDriveFileOutlinedIcon/> 
             <span>Черновики</span>
           </Link>
         </Button>
       </Box>
-      <Button variant='contained' className={styles.create}>
-        <AddIcon/>
-        Создать
-      </Button>
+      <CreatePostForm/>
     </div>
 
 

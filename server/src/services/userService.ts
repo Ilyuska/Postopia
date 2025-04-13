@@ -24,8 +24,8 @@ class UserService {
             email: user.email,
             name: user.name,
             passwordHash: hash, // Захэшированный пароль
+            avatar: user.avatar,
             posts: [], 
-            avatar: user.avatar
         });
 
         const savedUser = await doc.save();
