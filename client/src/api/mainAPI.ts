@@ -76,5 +76,20 @@ export const getMe = async () => {
         return response.data as IUser
     } catch (error) {
         console.error(error)
+        return false
     }
 }
+
+// export const isValidToken = async (token: string) => {
+//     try {
+//         const response = await axios.get('isValidToken', {
+//             headers: {
+//               'Authorization': `Bearer ${token}`
+//             }
+//         })
+
+//         return response.data
+//     } catch (error) {
+//         console.error(error)
+//     }
+// }

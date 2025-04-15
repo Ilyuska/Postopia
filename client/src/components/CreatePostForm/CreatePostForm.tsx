@@ -1,84 +1,144 @@
-import {FC, useState} from 'react'
-import { Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle, IconButton } from '@mui/material';
+import {FC, useState, ChangeEvent} from 'react'
+import { Button, TextField, Dialog, DialogActions, DialogTitle, IconButton } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import CloseIcon from '@mui/icons-material/Close';
 import styles from './styles.module.scss'
 
+interface PostData {
+  title: string;
+  message: string;
+  image: File | null;
+}
 
 const CreatePostForm: FC = () => {
     const [isOpen, setIsOpen] = useState(false)
+    const [newPost, setNewPost] = useState<PostData>({
+      title: '', 
+      message: '', 
+      image: null
+    })
 
-    const handleClose = () => setIsOpen(false)
+    const [postError, setPostError] = useState<PostData>({title: "", message: "", image: null})
+
+
+    const handleClose = () => {
+      setIsOpen(false)
+      setNewPost({title: '', message: '', image: null})
+    }
+
+    const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files.length > 0) {
+          setNewPost({...newPost, image: e.target.files[0]});
+        }
+    };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        if  (newPost.title.length < 4) {
+            setPostError({...postError, title: "Минимальная длинна заголовка 4"})
+            return;
+        }
+        setPostError({...postError, title: ""})
+        if (newPost.message.length < 16) {
+            setPostError({...postError, message: "Минимальная длина поста 16"})
+            return;
+        }
+        setPostError({...postError, message: ""})
 
-
-        setIsOpen(false)
+        // API call would go here
+        console.log('Form data:', {
+            title: newPost.title,
+            message: newPost.message,
+            image: newPost.image?.name
+        });
+        handleClose();
     }
 
     return (
         <>
-            <Button variant='contained' className={styles.create} onClick={()=>setIsOpen(true)}>
+            <Button 
+                variant='contained' 
+                className={styles.create} 
+                onClick={() => setIsOpen(true)}
+            >
                 <AddIcon/>
-                Создать 
+                Create Post
             </Button>
-            <Dialog open={isOpen} onClose={handleClose} component ='form' onSubmit= {(e) => handleSubmit(e)}>
-                <DialogTitle sx={{textAlign: 'center'}} >
-                    Creating Post
+            
+            <Dialog 
+              open={isOpen} 
+              onClose={handleClose}
+            >
+              <form 
+                onSubmit={handleSubmit}
+                encType="multipart/form-data"
+                action="/posts"
+                
+              >
+                <DialogTitle sx={{textAlign: 'center'}}>
+                    Create New Post
                 </DialogTitle>
                 <IconButton
-                aria-label="close"
-                onClick={handleClose}
-                sx={(theme) => ({
+                  aria-label="close"
+                  onClick={handleClose}
+                  sx={{
                     position: 'absolute',
                     right: 8,
                     top: 8,
-                    color: theme.palette.grey[500],
-                })}
+                    color: (theme) => theme.palette.grey[500],
+                  }}
                 >
-                <CloseIcon />
+                  <CloseIcon />
                 </IconButton>
 
-                <DialogContent>
-                    <TextField
-                        autoFocus
-                        required
-                        margin="dense"
-                        label='Post Title'
-                        type="text"
-                        fullWidth
-                        variant="outlined"
-                        // error = {!!loginError.email}
-                        // helperText={loginError.email}
-                        // onChange={(e)=>setLoginData({...loginData, email: e.target.value})}
-                        className={styles.title}
-                    />
-                    <TextField
-                        label="Post Message"
-                        autoFocus
-                        margin="dense"
-                        type="text"
-                        fullWidth
-                        variant="outlined"
-                        multiline  // Включает многострочный режим
-                        minRows={1} 
-                        maxRows={10}
-                        required
-                        // error={!!loginError.password}
-                        // helperText={loginError.password}
-                        // onChange={(e)=>setLoginData({...loginData, password: e.target.value})}
-                        className={styles.message}
-                    />
-                </DialogContent>
-
+                <TextField
+                    margin="dense"
+                    type="file"
+                    fullWidth
+                    variant="outlined"
+                    name='image'
+                    
+                    onChange={handleFileChange}
+                />
+                <TextField
+                    autoFocus
+                    required
+                    margin="dense"
+                    label='Post Title'
+                    type="text"
+                    name= "title"
+                    fullWidth
+                    variant="outlined"
+                    value={newPost.title}
+                    error = {postError.title.length>0}
+                    helperText={postError.title}
+                    onChange={(e) => setNewPost({...newPost, title: e.target.value})}
+                    className={styles.title}
+                />
+                <TextField
+                    label="Post Message"
+                    margin="dense"
+                    type="text"
+                    fullWidth
+                    variant="outlined"
+                    multiline
+                    minRows={4}
+                    required
+                    value={newPost.message}
+                    error = {postError.message.length>0}
+                    helperText={postError.message}
+                    onChange={(e) => setNewPost({...newPost, message: e.target.value})}
+                    className={styles.message}
+                    name = "message" 
+                />
                 <DialogActions>
                     <Button onClick={handleClose}>Cancel</Button>
                     <Button type="submit">Create</Button>
                 </DialogActions>
+              </form>
             </Dialog>
         </>
-  );
+    );
 };
 
 export default CreatePostForm;

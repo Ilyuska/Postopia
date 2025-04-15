@@ -1,9 +1,7 @@
 import {FC, useContext, useState} from 'react'
 import { Link } from 'react-router-dom';
 import {AuthContext, MyThemeContext} from '../../contexts/index.ts';
-import RegistrationForm from '../../components/RegistrationForm.tsx';
-import LoginForm from '../../components/LoginForm.tsx';
-import { Avatar, Input, Box, ButtonGroup, Button } from '@mui/material';
+import { Avatar, Input, Box, Button } from '@mui/material';
 import PersonIcon from '@mui/icons-material/Person';
 import SearchIcon from '@mui/icons-material/Search';
 import DarkModeOutlinedIcon from '@mui/icons-material/DarkModeOutlined';
@@ -38,18 +36,13 @@ const Header: FC = ({}) => {
 
         <div className={style.settings}>
           <Button sx={{color: 'white'}} onClick={() => toggleTheme()}> {isDarkTheme?  <DarkModeOutlinedIcon/>: <LightModeOutlinedIcon/> }</Button>
-          {isAuth ? (
+          {isAuth && (
             <>
               <Avatar onClick={burgerSwitch}>
                 <PersonIcon />
               </Avatar>
               <BurgerMenu status = {burgerOpen} setStatus={burgerSwitch}/>
             </>
-          ) : (
-            <ButtonGroup >
-              <LoginForm />
-              <RegistrationForm/>
-            </ButtonGroup>
           )}
         </div>
         
