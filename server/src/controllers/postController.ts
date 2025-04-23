@@ -17,8 +17,13 @@ const NotFoundPost = (res: Response, post: IResponse) => {
 class PostController {
     async getAll (req: Request, res: Response) {
         try {
-            const posts = await postService.getAll()
-            res.status(200).json(posts)
+            if (req.userId) {
+                const userId = req.userId
+                const posts = await postService.getAll(userId)
+                res.status(200).json(posts)
+            } else {
+                res.status(401).json({message: "Пользователь не авторизован"})
+            }
         } catch (error) {
             console.error(error)
             res.status(500).json('Не удалось получить посты')

@@ -9,17 +9,24 @@ interface ICreatePost {
 }
 
 class PostService {
-    async getAll () {
-        const posts = await Post.find<IPost[]>()
-            .populate('user', 'name avatar') // Поля, которые нужно получить
-            .populate('likes', 'name avatar')
-            .exec();
+    async getAll (userId: Types.ObjectId) {
+        const posts = await Post.find()
+        .populate('user', 'name avatar') // Подгружаем только name и avatar
+        .exec();
 
-        if (!posts) {
-            return {message: 'Посты не найдены'};
-        } 
+        if (!posts || posts.length === 0) {
+            return { message: 'Посты не найдены' };
+        }
 
-        return posts
+        const postsWithLiked = posts.map(post => {
+            const plainPost = post.toObject(); // превращаем документ в обычный объект
+            return {
+                ...plainPost,
+                liked: post.likes.includes(userId), // добавляем поле liked
+            };
+        });
+    
+        return postsWithLiked;
     }
 
 

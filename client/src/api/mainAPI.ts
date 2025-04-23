@@ -2,15 +2,14 @@ import axios from 'axios'
 import { ILoginData, IRegisterData, IUser } from '../interfaces/IUser'
 import { IPost } from '../interfaces/IPost'
 
-const BACKEND_LINK = "http://localhost:3000/"
-
+const BACKEND_LINK = "http://localhost:3000"
 axios.defaults.baseURL = BACKEND_LINK
 
 
 export const loginAPI = async (data: ILoginData):Promise<string | ILoginData> => {
     try {
         const response = await axios.post(
-            'login',
+            '/login',
             {...data}, // Axios автоматически преобразует в JSON
           );
       
@@ -30,7 +29,7 @@ export const loginAPI = async (data: ILoginData):Promise<string | ILoginData> =>
 
 export const registrationAPI = async (data: IRegisterData):Promise <string | IRegisterData> => {
     try {
-        const response = await axios.post('registration', {...data});
+        const response = await axios.post('/registration', {...data});
         return response.data.token
     } catch (error) {
         if (axios.isAxiosError(error)) {
@@ -56,7 +55,7 @@ export const registrationAPI = async (data: IRegisterData):Promise <string | IRe
 
 export const getAllPosts = async () => {
     try {
-        const response = await axios.get<IPost[]>('posts')
+        const response = await axios.get<IPost[]>('/posts')
 
         return response.data as IPost[]
     } catch (error) {
@@ -67,7 +66,7 @@ export const getAllPosts = async () => {
 
 export const getMe = async () => {
     try {
-        const response = await axios.get<IUser>('me', {
+        const response = await axios.get<IUser>('/me', {
             headers: {
               'Authorization': `Bearer ${localStorage.getItem('token')}`
             }

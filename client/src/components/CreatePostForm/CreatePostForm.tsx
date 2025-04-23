@@ -103,11 +103,10 @@ const CreatePostForm: FC = () => {
                 <TextField
                     autoFocus
                     required
-                    margin="dense"
+                    margin="dense" //Надо ли??
                     label='Post Title'
-                    type="text"
                     name= "title"
-                    fullWidth
+                    type="text"
                     variant="outlined"
                     value={newPost.title}
                     error = {postError.title.length>0}
@@ -116,20 +115,19 @@ const CreatePostForm: FC = () => {
                     className={styles.title}
                 />
                 <TextField
-                    label="Post Message"
+                    required
                     margin="dense"
+                    label="Post Message"
+                    name = "message" 
                     type="text"
-                    fullWidth
                     variant="outlined"
                     multiline
                     minRows={4}
-                    required
                     value={newPost.message}
                     error = {postError.message.length>0}
                     helperText={postError.message}
                     onChange={(e) => setNewPost({...newPost, message: e.target.value})}
                     className={styles.message}
-                    name = "message" 
                 />
                 <DialogActions>
                     <Button onClick={handleClose}>Cancel</Button>
