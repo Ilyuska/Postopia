@@ -20,7 +20,7 @@ const BurgerMenu: FC<IBurgerMenu> = ({status, setStatus}) => {
     <>
         <Box className={styles.background} sx={!status? {display: 'none'}: {display: 'block'}} onClick = {()=> setStatus()}></Box>
         <Box className={styles.burger} sx={!status? {display: 'none'}: {...stylesBurger}} >
-            <Link to='/profile'>
+            <Link to='/me'>
                 <Button sx={{color:'text.primary', width: '100%'}} onClick = {()=> setStatus()}>Profile</Button>
             </Link>
             <Link to='/'>

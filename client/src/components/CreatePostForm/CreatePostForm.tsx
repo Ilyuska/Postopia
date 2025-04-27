@@ -3,6 +3,7 @@ import { Button, TextField, Dialog, DialogActions, DialogTitle, IconButton } fro
 import AddIcon from '@mui/icons-material/Add';
 import CloseIcon from '@mui/icons-material/Close';
 import styles from './styles.module.scss'
+import { postAPI } from '../../store/reducers/posts.slice';
 
 interface PostData {
   title: string;
@@ -11,6 +12,7 @@ interface PostData {
 }
 
 const CreatePostForm: FC = () => {
+    const [createPost] = postAPI.useCreatePostMutation() //Создание поста
     const [isOpen, setIsOpen] = useState(false)
     const [newPost, setNewPost] = useState<PostData>({
       title: '', 
@@ -39,19 +41,17 @@ const CreatePostForm: FC = () => {
             return;
         }
         setPostError({...postError, title: ""})
-        if (newPost.message.length < 16) {
-            setPostError({...postError, message: "Минимальная длина поста 16"})
+        if (newPost.message.length < 10) {
+            setPostError({...postError, message: "Минимальная длина поста 10"})
             return;
         }
         setPostError({...postError, message: ""})
-
-        // API call would go here
-        console.log('Form data:', {
-            title: newPost.title,
-            message: newPost.message,
-            image: newPost.image?.name
-        });
-        handleClose();
+        try {
+          await createPost(newPost)
+          handleClose();
+        } catch (error) {
+          alert('Не удалось создать пост')
+        }   
     }
 
     return (

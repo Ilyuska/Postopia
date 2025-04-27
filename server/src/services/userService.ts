@@ -79,13 +79,13 @@ class UserService {
 
 
     async getMe(userId: Types.ObjectId) {
-        const findedUser = await User.findById({_id: userId})
+        const findedUser = await User.findById(userId).populate('posts');
 
         if (!findedUser) {
             throw new Error('Пользователь не найден');
         } 
 
-        const { passwordHash, createdAt, updatedAt, email, ...userData } = findedUser.toObject();
+        const { passwordHash, createdAt, updatedAt, ...userData } = findedUser.toObject();
 
         return {
             ...userData

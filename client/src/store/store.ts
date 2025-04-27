@@ -1,5 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit';
-import { postAPI } from './reducers/allPosts.slice';
+import { postAPI } from './reducers/posts.slice';
 import { userAPI } from './reducers/user.slice';
 
 

@@ -8,8 +8,10 @@ import DarkModeOutlinedIcon from '@mui/icons-material/DarkModeOutlined';
 import LightModeOutlinedIcon from '@mui/icons-material/LightModeOutlined';
 import style from "./style.module.scss"
 import BurgerMenu from '../../components/BurgerMenu/BurgerMenu.tsx';
+import { userAPI } from '../../store/reducers/user.slice.ts';
 
 const Header: FC = ({}) => {
+  const {data: me} =  userAPI.useGetMeQuery()
   const { isAuth } = useContext(AuthContext);
   const {isDarkTheme, toggleTheme} = useContext(MyThemeContext)
   const [burgerOpen, setBurgerOpen] = useState<boolean>(false)
@@ -38,8 +40,8 @@ const Header: FC = ({}) => {
           <Button sx={{color: 'white'}} onClick={() => toggleTheme()}> {isDarkTheme?  <DarkModeOutlinedIcon/>: <LightModeOutlinedIcon/> }</Button>
           {isAuth && (
             <>
-              <Avatar onClick={burgerSwitch}>
-                <PersonIcon />
+              <Avatar onClick={burgerSwitch} src={`http://localhost:3000/uploads/${me?.avatar}`} >
+                {!me?.avatar && <PersonIcon />}               
               </Avatar>
               <BurgerMenu status = {burgerOpen} setStatus={burgerSwitch}/>
             </>

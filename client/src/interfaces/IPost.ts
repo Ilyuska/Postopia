@@ -1,12 +1,12 @@
 import { IUser } from "./IUser";
 
 export interface IPost {
-    id: string
+    _id: string
     image: string,
     title: string;
     message: string;
     likes: [];
     liked?: boolean
-    user: IUser;
+    user: Omit<IUser, 'posts'>;
     comments: [];
 }

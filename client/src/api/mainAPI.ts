@@ -53,11 +53,13 @@ export const registrationAPI = async (data: IRegisterData):Promise <string | IRe
 }
 
 
-export const getAllPosts = async () => {
+export const postLike = async (id: string) => {
     try {
-        const response = await axios.get<IPost[]>('/posts')
-
-        return response.data as IPost[]
+        await axios.patch(`/posts/${id}/like`, null, {
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            }
+        });
     } catch (error) {
         console.error(error)
     }

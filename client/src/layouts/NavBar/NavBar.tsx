@@ -26,7 +26,7 @@ const NavBar: FC = () => {
     <div className={styles.navBar} style={isAuth? {display:'block'}: {display: 'none'}}>
       <Box sx={{ display: 'flex', flexDirection: 'column'}}>
         <Button sx={{color: 'text.primary', ...alignButtons }}> 
-          <Link to='/profile' className={styles.imgBtn} style={{ color: 'inherit' }}> 
+          <Link to='/me' className={styles.imgBtn} style={{ color: 'inherit' }}> 
               <PersonIcon/>
             <span>Профиль</span></Link>
         </Button>

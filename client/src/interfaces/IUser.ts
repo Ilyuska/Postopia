@@ -10,8 +10,7 @@ export interface IRegisterData extends ILoginData {
 }
 
 export interface IUser extends Omit<IRegisterData, 'password'> {
-    id: string
+    _id: string
     avatar?: string
     posts: IPost[]
 }
-

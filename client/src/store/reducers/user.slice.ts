@@ -6,11 +6,11 @@ export const userAPI = createApi({
     baseQuery: fetchBaseQuery({baseUrl: 'http://localhost:3000'}), 
     tagTypes: ['User'], 
     endpoints: (build) => ({
-        getMe: build.query<IUser, string>({ 
-            query: (token) => ({
+        getMe: build.query<IUser, void>({ 
+            query: () => ({
                 url: `/me`,
                 headers: {
-                    Authorization: `Bearer ${token}`,
+                    Authorization: `Bearer ${localStorage.getItem('token')}`,
                 },
             }),
             providesTags: (result) => result ? ['User'] : []
@@ -34,7 +34,7 @@ export const userAPI = createApi({
             invalidatesTags: ['User'] //Указываем что текущие сведения устарели и просим заново сделать запрос
         }),
 
-        updatePost: build.mutation<IUser, {token: string, user: IUser}>({ 
+        updateUser: build.mutation<IUser, {token: string, user: IUser}>({ 
             query: ({token, user}) => ({
                 url: `/me`, //Достаем post.id как параметр запроса
                 method: 'PATCH',
@@ -46,7 +46,7 @@ export const userAPI = createApi({
             invalidatesTags: ['User']
         }),
 
-        deletePost: build.mutation<void, {token: string}>({ 
+        deleteUser: build.mutation<void, {token: string}>({ 
             query: (token) => ({
                 url: `/me`,
                 method: 'DELETE',

@@ -1,5 +1,6 @@
 import { Types } from "mongoose";
 import Post, { IPost } from "../models/Post";
+import User from "../models/User";
 
 interface ICreatePost {
     user: Types.ObjectId | undefined
@@ -49,8 +50,13 @@ class PostService {
             likes: [],
             comments: []
         });
-        
+
         const savedPost = await doc.save()
+
+        await User.findByIdAndUpdate(
+            savedPost.user,
+            { $push: { posts: savedPost._id } }, // Добавляем ID поста в массив posts
+        );
   
         return savedPost;
     }

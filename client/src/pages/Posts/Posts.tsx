@@ -1,37 +1,19 @@
-import { FC, useEffect, useState } from 'react';
-import { IPost } from '../../interfaces/IPost';
-import { getAllPosts } from '../../api/mainAPI';
+import { FC } from 'react';
 import Post from '../../components/Post/Post';
-import { postAPI } from '../../store/reducers/allPosts.slice';
+import { postAPI } from '../../store/reducers/posts.slice';
+import Loading from '../../components/Loading/Loading';
+import { Box } from '@mui/material';
 
 const Posts: FC = () => {
-  // const [posts, setPosts] = useState<IPost[]>([]);
-  // useEffect(() => { 
-  //   const fetchPosts = async () => {
-  //     try {
-  //       const data = await getAllPosts();
-  //       if (data) {
-  //         setPosts(data);
-  //       } else {
-  //         console.error('Не удалось загрузить посты');
-  //       }
-  //     } catch (error) {
-  //       console.error('Ошибка при загрузке постов:', error);
-  //     }
-  //   };
-
-  //   fetchPosts();
-  // }, []);
-
   const {data: posts, error, isLoading} =  postAPI.useFetchAllPostsQuery(localStorage.getItem('token') || '')
-
+  console.log(posts)
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-      {isLoading && <h2>Идет загрузка</h2>}
-      {error && <div>Произошла ошибка. Подробности в консоли</div>}
+      {isLoading && <Loading/>}
+      {error && <Box sx={{color: 'primary.main', display: 'flex', justifyContent: 'center'}}>Произошла ошибка. Подробности в консоли</Box>}
       {posts && posts.map(post => (
-        <Post post={post} key={post.id} />
+        <Post post={post} key={post._id} />
       ))}
     </div>
   );

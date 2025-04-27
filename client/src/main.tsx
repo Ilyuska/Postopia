@@ -4,8 +4,8 @@ import { CssBaseline } from '@mui/material';
 import App from './App.tsx'
 
 createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-    <CssBaseline />  {/* Файл обнуления стилей */}
-    <App />
-  </StrictMode>,
+    <>
+      <CssBaseline />  {/* Файл обнуления стилей */}
+      <App />
+    </>
 )
