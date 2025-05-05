@@ -1,20 +1,31 @@
 import  { Schema, Document, Types, model } from 'mongoose';
 
 export interface IUser extends Document {
-    name: string,
+    firstName: string,
+    lastName: string,
+    birthday: string,
     email: string,
     passwordHash: string,
     avatar?: string,
     posts: Types.ObjectId[]
+    favorites: Types.ObjectId[]
     createdAt?: Date;
     updatedAt?: Date;
 } 
 
 const UserSchema = new Schema <IUser>({
-    name: {
+    firstName: {
         type: String,
         required: true
     }, //Тип строка, поле обязательное
+    lastName: {
+        type: String,
+        required: true
+    }, //Тип строка, поле обязательное
+    birthday: {
+        type: String,
+        required: true
+    },
     email: {
         type: String,
         required: true,
@@ -33,7 +44,12 @@ const UserSchema = new Schema <IUser>({
         type: Types.ObjectId, 
         ref: 'Post',
         default: []
-    }]
+    }],
+    favorites: [{
+        type: Types.ObjectId, 
+        ref: 'Post',
+        default: []
+    }],
 }, {
     timestamps: true, //Добавляем время создания пользователя (И редактирования)
 });

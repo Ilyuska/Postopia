@@ -72,8 +72,16 @@ class PostService {
         // Проверяем, есть ли userId в массиве likes
         if (post.likes.some(like => like.equals(userId))) {
             post.likes = post.likes.filter(like => !like.equals(userId));
+            await User.findByIdAndUpdate(
+                userId,
+                { $pull: { favorites: post._id } }, // Удаляем пост из избранных
+            );
         } else {
             post.likes.push(userId)
+            await User.findByIdAndUpdate(
+                userId,
+                { $push: { favorites: post._id } }, // Добавляем пост в избранные
+            );
         }    
         const newPost = await post.save();
         

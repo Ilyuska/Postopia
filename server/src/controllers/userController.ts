@@ -30,10 +30,10 @@ function AuthError (error, res: Response): void {
 class UserController {
     async registration (req: Request, res: Response): Promise<void> {
         try {
-            const {name, email, password} = req.body
+            const {email, firstName, lastName, birthday, password} = req.body
             const avatar = req.file ? `${req.file.filename}` : undefined;
             if (avatar == undefined) console.error('photo??')    
-            const user = await UserService.registration({name, email, password, avatar})
+            const user = await UserService.registration({email, firstName, lastName, birthday, password, avatar})
             res.status(201).json(user)
         } catch (error) {
             console.error('Ошибка при регистрации:', error);
@@ -85,9 +85,9 @@ class UserController {
     async update (req: Request, res: Response) {  
         try {
             if (req.userId) {
-                const {name} = req.body
+                const {firstName, lastName, birthday} = req.body
                 const avatar = req.file ? `/avatars/${req.file.filename}` : undefined;
-                const user = await UserService.update(req.userId, {name, avatar})
+                const user = await UserService.update(req.userId, {firstName, lastName, birthday, avatar})
                 res.status(200).json(user)
             } else {
                 res.status(401).json({message: "Пользователь не авторизован"})
@@ -108,6 +108,21 @@ class UserController {
                 res.status(401).json({message: "Пользователь не авторизован"})
             }   
         } catch (error) {
+            console.error('Пользователь не найден:', error);
+            AuthError(error, res)
+        }
+    }
+
+    async getFavorites (req: Request, res: Response) {
+        try {
+            if (req.userId) {
+                const favorites = await UserService.getFavorites(req.userId)
+                res.status(200).json(favorites)
+            } else {
+                res.status(401).json('Пользователь не авторизован')
+            }
+            
+        } catch (error) {  
             console.error('Пользователь не найден:', error);
             AuthError(error, res)
         }
