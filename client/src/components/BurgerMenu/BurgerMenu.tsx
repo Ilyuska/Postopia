@@ -1,8 +1,9 @@
-import {FC, useContext} from 'react'
+import {FC} from 'react'
 import styles from './styles.module.scss'
-import { Box, Button, ButtonGroup } from '@mui/material';
-import { AuthContext } from '../../contexts';
-import { Link } from 'react-router-dom';
+import { Box, Button } from '@mui/material';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAppDispatch } from '../../hooks/redux';
+import { resetApiState } from '../../store/reducers/user.slice';
 
 interface IBurgerMenu {
     status: boolean, 
@@ -14,7 +15,15 @@ const stylesBurger = {
 }
 
 const BurgerMenu: FC<IBurgerMenu> = ({status, setStatus}) => {
-    const {logout} = useContext(AuthContext)
+
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+
+  const logout = () => {
+    localStorage.removeItem('token');
+    dispatch(resetApiState());
+    navigate('/login');
+  };
 
   return (
     <>

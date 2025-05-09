@@ -6,10 +6,10 @@ import { Box } from '@mui/material';
 
 const Posts: FC = () => {
   const {data: posts, error, isLoading} =  postAPI.useFetchAllPostsQuery(localStorage.getItem('token') || '')
-  console.log(posts)
+  // console.log(posts)
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+    <div style={{ display: 'flex', flexDirection: 'column' }}>
       {isLoading && <Loading/>}
       {error && <Box sx={{color: 'primary.main', display: 'flex', justifyContent: 'center'}}>Произошла ошибка. Подробности в консоли</Box>}
       {posts && posts.map(post => (

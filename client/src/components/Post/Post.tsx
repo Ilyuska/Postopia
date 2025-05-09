@@ -39,8 +39,8 @@ const Post: FC<PostProps> = ({ post }) => {
           <Avatar src={post.user?.avatar ? `http://localhost:3000/uploads/${post.user.avatar}` : undefined}>
               {!post.user?.avatar && <PersonIcon />}
           </Avatar>
-          <span>{post.user?.name}</span>
-        </Box>
+          <span>{post.user?.firstName}</span>
+        </Box>  
       </Link>
 
       <Box sx={{ backgroundColor: 'secondary.main' }} className={styles.mainContent}>
@@ -65,10 +65,10 @@ const Post: FC<PostProps> = ({ post }) => {
             }
             <span>{likesCount || 0}</span>
           </Box>
-          {/* <Box className={styles.comments}>
+          <Box className={styles.comments}>
             <ChatBubbleOutlineIcon />
             <span>0</span>
-          </Box> */}
+          </Box>
           <Box className={styles.likes}>
             <ShareIcon />
           </Box>

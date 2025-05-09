@@ -11,7 +11,7 @@ function AuthError (error, res: Response): void {
         }
 
         if (error.message === "Неверный логин или пароль") {
-            res.status(401).json({ message: error.message });
+            res.status(401).json({ email: error.message, password: error.message });
             return;
         }
 

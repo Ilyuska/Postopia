@@ -25,8 +25,8 @@ const MyProfile: FC = () => {
               </Avatar>
             
             <Box sx={{display: 'flex', flexDirection: 'column', justifyContent: 'space-between', width: '100%'}}>
-              <TextField type='text' title='name'  required label='Name' value={me?.name || ' '}/>
-              <TextField type='email' title='email' label='Email' value={me?.email || ' '}/>
+              <TextField type='text' title='name'  required label='Name' value={me?.firstName || ' '}/>
+              <TextField type='email' title='email' label='Email' value={me?.lastName || ' '}/>
               <Box sx={{display: 'flex', justifyContent: 'end', gap: '20px'}}>
                 <Button variant='outlined'>Save</Button>
                 <Button variant='outlined' color='error'>Cancel</Button>
@@ -39,7 +39,7 @@ const MyProfile: FC = () => {
           <Box component={'h2'} sx={{color: 'text.primary'}} className={styles.title}>POSTS</Box>
           {me.posts.length > 0 
             ? me.posts.map(post => (
-              <Post post={{...post, liked:post.likes.some(like => like === me._id), user: {avatar: me.avatar, name: me.name, email: me.email, _id: me._id}}} key={post._id} />
+              <Post post={{...post, liked:post.likes.some(like => like === me._id), user: me}} key={post._id} />
             ))
             : (<Box sx={{color: 'text.primary'}}>Постов нет</Box>)}
         </Box>

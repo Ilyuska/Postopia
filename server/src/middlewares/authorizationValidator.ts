@@ -17,7 +17,10 @@ export const authorizationValidator = (req: Request, res: Response, next: NextFu
                 message: err.message,
             }));
             // Отправляем ответ и завершаем выполнение функции
-            res.status(400).json({ message: "Некорректные данные", errors });
+            res.status(400).json(errors.reduce((acc, err) => {
+                return { ...acc, [err.field]: err.message }}
+                , {})
+            )
         } else {
             // Если ошибка не связана с валидацией
             res.status(500).json({ message: "Внутренняя ошибка сервера" });

@@ -1,11 +1,15 @@
 .form {
     width: 500px;
+    max-width: 90vw ;
     border-radius: 20px ; 
     display: flex;
     flex-direction: column; 
     justify-content: space-between; 
     position: fixed;
-    top: 50%; 
+    top: 60%; 
     left: 50%; 
     transform: translate(-50%, -50%);
+    @include respond-from ('md') {
+        top: 50%;
+    }
 }

@@ -1,6 +1,5 @@
-import {FC, useContext} from 'react'
+import {FC} from 'react'
 import { Link } from 'react-router-dom';
-import { AuthContext } from '../../contexts';
 import CreatePostForm from '../../components/CreatePostForm/CreatePostForm';
 import { Box, Button } from '@mui/material';
 import PersonIcon from '@mui/icons-material/Person';
@@ -9,6 +8,7 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
 import InsertDriveFileOutlinedIcon from '@mui/icons-material/InsertDriveFileOutlined';
 import styles from './styles.module.scss'
+import { userAPI } from '../../store/reducers/user.slice';
 
 
 
@@ -20,10 +20,10 @@ const NavBar: FC = () => {
     justifyContent: 'start'
   }
 
-  const {isAuth} = useContext(AuthContext)
+    const {data: me} =  userAPI.useGetMeQuery()
 
   return (
-    <div className={styles.navBar} style={isAuth? {display:'block'}: {display: 'none'}}>
+    <div className={styles.navBar} style={me? {display:'block'}: {display: 'none'}}>
       <Box sx={{ display: 'flex', flexDirection: 'column'}}>
         <Button sx={{color: 'text.primary', ...alignButtons }}> 
           <Link to='/me' className={styles.imgBtn} style={{ color: 'inherit' }}> 

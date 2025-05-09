@@ -1,0 +1,21 @@
+a {
+  color: black;
+  text-decoration: none;
+}
+
+// Глобальные стили для MUI TextField
+.MuiTextField-root {
+  .MuiInputBase-input {
+    color: black !important;
+  }
+
+  .MuiInputLabel-root {
+    color: black !important;
+
+    &.Mui-focused {
+      color: black !important;
+    }
+  }
+}
+
+

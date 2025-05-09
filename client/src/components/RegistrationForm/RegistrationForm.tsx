@@ -1,7 +1,5 @@
-import {FC, useState, useContext} from 'react'
-import { AuthContext } from '../../contexts';
-import { registrationAPI } from '../../api/mainAPI';
-import { IRegisterData } from '../../interfaces/IUser';
+import {ChangeEvent, FC, useState} from 'react'
+import { IRegisterData, IRegisterError } from '../../interfaces/IUser';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import DialogActions from '@mui/material/DialogActions';
@@ -10,39 +8,57 @@ import CloseIcon from '@mui/icons-material/Close';
 import DialogTitle from '@mui/material/DialogTitle';
 import { Box, IconButton } from '@mui/material';
 import styles from "./style.module.scss"
+import { useNavigate } from 'react-router-dom';
+import { userAPI } from '../../store/reducers/user.slice';
+import InputFile from '../InputFile/InputFile';
 
 
 const RegistrationForm: FC = () => {
-  const {login} = useContext(AuthContext)
+  const navigate = useNavigate()
   const [open, setOpen] = useState<boolean>(false);
-  const [registerData, setRegisterData] = useState<IRegisterData>({email: "", password: "", name:""})
-  const [registerError, setRegisterError] = useState<IRegisterData>({email: "", password: "", name:""})
+  const [registerData, setRegisterData] = useState<IRegisterData>({email: "", password: "", firstName: "", lastName: "", birthday: ""})
+  const [registerError, setRegisterError] = useState<IRegisterData>({email: "", password: "", firstName: "", lastName: "", birthday:""})
 
-  const handleOpen = () => {
-    setOpen(true);
-  };
+  const [registration] = userAPI.useRegistrationMutation();
 
   const handleClose = () => {
     setOpen(false);
-    setRegisterError({email: "", password: "", name:""})
+    setRegisterError({email: "", password: "", firstName: "", lastName: "", birthday: ""})
+  };
+
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      setRegisterData({...registerData, avatar: e.target.files[0]});
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const token = await registrationAPI(registerData);
-    if (token instanceof Object) {
-      setRegisterError(token)
-    } else {
-      login(token);
-      handleClose();
+    try {
+      const user = await registration(registerData).unwrap();
+      localStorage.setItem('token', user.token);
+      navigate('/posts')
+    } catch (error) {
+      console.log(error)
+      const customError = error as IRegisterError
+      setRegisterError({...customError.data})
     }
+  };
+
+
+  const getMaxDate = ():string => {
+    const today = new Date();
+    const year = Number(today.getFullYear())-13;
+    const month = String(today.getMonth() + 1).padStart(2, "0");
+    const day = String(today.getDate() + 1).padStart(2, "0");
+    return `${String(year)}-${month}-${day}`;
   };
 
 
   return (
     <>
-      <Button variant="text" onClick={handleOpen} sx= {{backgroundColor: 'none', color: 'background.default', display: 'block', fontSize: '12px', mx: 'auto'}}>
+      <Button variant="text" onClick={()=> setOpen(true)} sx= {{backgroundColor: 'none', color: 'black', display: 'block', fontSize: '12px', mx: 'auto'}}>
         Sign up
       </Button>
       { open &&
@@ -65,22 +81,49 @@ const RegistrationForm: FC = () => {
           </IconButton>
 
           <DialogContent>
-          <TextField
+            <InputFile onChange = {handleFileChange} styles=' '/>
+            <TextField
               autoFocus
               required
               margin="dense"
-              name="name"
-              label="Name"
-              type="name"
+              name="firstname"
+              label="Firstname"
               fullWidth
               variant="standard"
-              error = {!!registerError.name}
-              helperText={registerError.name}
-              onChange={(e)=>setRegisterData({...registerData, name: e.target.value})}
-              sx={{
-                '& .MuiInputBase-input': { color: 'black' }, // Цвет текста
-                '& .MuiInputLabel-root': { color: 'black' }, // Цвет лейбла
-                '& .MuiInputLabel-root.Mui-focused': { color: 'black' }, // Цвет лейбла при фокусе
+              error = {Boolean(registerError.firstName)}
+              helperText={registerError.firstName}
+              onChange={(e)=>setRegisterData({...registerData, firstName: e.target.value})}
+              />
+            <TextField
+              required
+              margin="dense"
+              name="lastname"
+              label="Lastname"
+              fullWidth
+              variant="standard"
+              error = {Boolean(registerError.lastName)}
+              helperText={registerError.lastName}
+              onChange={(e)=>setRegisterData({...registerData, lastName: e.target.value})}
+            />
+            <TextField
+              required
+              margin="dense"
+              name="birthday"
+              label="Birthday"
+              type="date"
+              fullWidth
+              variant="standard"
+              error = {Boolean(registerError.birthday)}
+              helperText={registerError.birthday}
+              onChange={(e)=>setRegisterData({...registerData, birthday: e.target.value})}
+              slotProps={{ 
+                inputLabel: { 
+                  shrink: true 
+                }, 
+                htmlInput: {
+                  max: getMaxDate(), 
+                  min: '1990-01-01'
+                } 
               }}
             />
             <TextField
@@ -91,14 +134,9 @@ const RegistrationForm: FC = () => {
               type="email"
               fullWidth
               variant="standard"
-              error = {!!registerError.email}
+              error = {Boolean(registerError.email)}
               helperText={registerError.email}
               onChange={(e)=>setRegisterData({...registerData, email: e.target.value})}
-              sx={{
-                '& .MuiInputBase-input': { color: 'black' }, // Цвет текста
-                '& .MuiInputLabel-root': { color: 'black' }, // Цвет лейбла
-                '& .MuiInputLabel-root.Mui-focused': { color: 'black' }, // Цвет лейбла при фокусе
-              }}
             />
             <TextField
               required
@@ -107,15 +145,10 @@ const RegistrationForm: FC = () => {
               label="Password"
               type="password"
               fullWidth
-              error={!!registerError.password}
+              error={Boolean(registerError.password)}
               helperText={registerError.password}
               variant="standard"
               onChange={(e)=>setRegisterData({...registerData, password: e.target.value})}
-              sx={{
-                '& .MuiInputBase-input': { color: 'black' }, // Цвет текста
-                '& .MuiInputLabel-root': { color: 'black' }, // Цвет лейбла
-                '& .MuiInputLabel-root.Mui-focused': { color: 'black' }, // Цвет лейбла при фокусе
-              }}
             />
           </DialogContent>
 
