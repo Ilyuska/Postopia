@@ -35,7 +35,7 @@ const MyProfile: FC = () => {
           </Box>
         </Card>
 
-        <Box sx={{mt: '30px', height: '100vh'}}>
+        <Box sx={{mt: '30px'}}>
           <Box component={'h2'} sx={{color: 'text.primary'}} className={styles.title}>POSTS</Box>
           {me.posts.length > 0 
             ? me.posts.map(post => (

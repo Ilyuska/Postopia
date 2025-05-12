@@ -1,8 +1,9 @@
-import {FC} from 'react'
+import {FC, useState} from 'react'
 import { Link } from 'react-router-dom';
 import CreatePostForm from '../../components/CreatePostForm/CreatePostForm';
 import { Box, Button } from '@mui/material';
 import PersonIcon from '@mui/icons-material/Person';
+import AddIcon from '@mui/icons-material/Add';
 import ReorderIcon from '@mui/icons-material/Reorder';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
@@ -21,10 +22,14 @@ const NavBar: FC = () => {
   }
 
     const {data: me} =  userAPI.useGetMeQuery()
+    const [isOpen, setIsOpen] = useState<boolean>(false)
+    const onClick = () => {
+      setIsOpen(!isOpen)
+    }
 
   return (
-    <div className={styles.navBar} style={me? {display:'block'}: {display: 'none'}}>
-      <Box sx={{ display: 'flex', flexDirection: 'column'}}>
+    me && (
+      <Box className={styles.navBar}>
         <Button sx={{color: 'text.primary', ...alignButtons }}> 
           <Link to='/me' className={styles.imgBtn} style={{ color: 'inherit' }}> 
               <PersonIcon/>
@@ -54,11 +59,17 @@ const NavBar: FC = () => {
             <span>Черновики</span>
           </Link>
         </Button>
+        <Button 
+          variant='contained' 
+          sx={{width:'100%', marginTop: '10px'}}
+          onClick={onClick}
+        >
+          <AddIcon/>
+          Create Post
+        </Button>
+      <CreatePostForm isOpen = {isOpen} setIsOpen={onClick}/>
       </Box>
-      <CreatePostForm/>
-    </div>
-
-
+    )
   );
 };
 

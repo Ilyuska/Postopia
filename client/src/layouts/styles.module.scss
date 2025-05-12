@@ -1,0 +1,14 @@
+.outlet {
+    padding: 80px 50px;
+
+    @include respond-from ('sm') {
+        padding: 60px 8vw 60px calc(8vw + 220px) ;
+    }
+
+    @include respond-from ('md') {
+        padding: 60px 15vw 60px calc(15vw + 220px) ;
+    }
+    @include respond-from ('xl') {
+        padding: 60px 22vw 60px calc(22vw + 220px) ;
+    }
+}

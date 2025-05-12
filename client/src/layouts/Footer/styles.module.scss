@@ -1,0 +1,21 @@
+.footer {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1.5fr 1fr 1fr;
+    position: fixed;
+    bottom: 0;
+    width: 100vw;
+    height: 100px;
+    align-items: end;
+
+    @include respond-from ('sm') {
+        display: none;
+    }
+
+    .button_others {
+        height: 45%;
+    }
+    .button_add {
+        height: 70%;
+        border-radius: 45% 45% 0 0;
+    }
+}

@@ -4,6 +4,8 @@ import Header from './Header/Header'
 import { Box } from '@mui/material';
 import NavBar from './NavBar/NavBar';
 import { userAPI } from '../store/reducers/user.slice';
+import styles from "./styles.module.scss"
+import Footer from './Footer/Footer';
 
 const Layout: FC = ({}) => {
   const navigate = useNavigate()
@@ -31,9 +33,10 @@ const Layout: FC = ({}) => {
     <>
         <Header/>
         <NavBar />
-        <Box component='div' sx={{padding: '85px 18vw 0 300px;', bgcolor: 'background.default', minHeight: '100vh'}}>
+        <Box component='div' sx={{bgcolor: 'background.default', height: 'auto', minHeight: '100vh' }} className={styles.outlet}>
           <Outlet />
         </Box>
+        <Footer/>
     </>
   );
 };

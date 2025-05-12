@@ -7,10 +7,10 @@ import DialogContent from '@mui/material/DialogContent';
 import CloseIcon from '@mui/icons-material/Close';
 import DialogTitle from '@mui/material/DialogTitle';
 import { Box, IconButton } from '@mui/material';
-import styles from "./style.module.scss"
 import { useNavigate } from 'react-router-dom';
 import { userAPI } from '../../store/reducers/user.slice';
 import InputFile from '../InputFile/InputFile';
+import styles from "./styles.module.scss"
 
 
 const RegistrationForm: FC = () => {

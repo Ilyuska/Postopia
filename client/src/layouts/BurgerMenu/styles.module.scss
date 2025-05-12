@@ -1,11 +1,22 @@
 .burger {
     position: fixed;
-    top: 55px;
+    top: 50px;
     width: 150px;
     right: 10px;
     z-index: 10;
     display: flex;
     flex-direction: column;
+
+    @include respond-from ('sm') {
+        right: 8vw;
+    }
+    @include respond-from ('md') {
+        right: 15vw;
+    }
+
+    @include respond-from ('xl') {
+        right: 22vw;
+    }
 }
 
 .background {

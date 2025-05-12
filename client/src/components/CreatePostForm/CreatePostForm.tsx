@@ -1,9 +1,14 @@
 import {FC, useState, ChangeEvent} from 'react'
 import { Button, TextField, Dialog, DialogActions, DialogTitle, IconButton } from '@mui/material';
-import AddIcon from '@mui/icons-material/Add';
+
 import CloseIcon from '@mui/icons-material/Close';
 import styles from './styles.module.scss'
 import { postAPI } from '../../store/reducers/posts.slice';
+
+interface CreatePostForm {
+  isOpen: boolean;
+  setIsOpen: ()=>void
+}
 
 interface PostData {
   title: string;
@@ -11,9 +16,8 @@ interface PostData {
   image: File | null;
 }
 
-const CreatePostForm: FC = () => {
+const CreatePostForm: FC<CreatePostForm>  = ({isOpen, setIsOpen}) => {
     const [createPost] = postAPI.useCreatePostMutation() //Создание поста
-    const [isOpen, setIsOpen] = useState(false)
     const [newPost, setNewPost] = useState<PostData>({
       title: '', 
       message: '', 
@@ -24,7 +28,7 @@ const CreatePostForm: FC = () => {
 
 
     const handleClose = () => {
-      setIsOpen(false)
+      setIsOpen()
       setNewPost({title: '', message: '', image: null})
     }
 
@@ -56,14 +60,7 @@ const CreatePostForm: FC = () => {
 
     return (
         <>
-            <Button 
-                variant='contained' 
-                className={styles.create} 
-                onClick={() => setIsOpen(true)}
-            >
-                <AddIcon/>
-                Create Post
-            </Button>
+
             
             <Dialog 
               open={isOpen} 
