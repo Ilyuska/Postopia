@@ -7,7 +7,6 @@ import AddIcon from '@mui/icons-material/Add';
 import ReorderIcon from '@mui/icons-material/Reorder';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
-import InsertDriveFileOutlinedIcon from '@mui/icons-material/InsertDriveFileOutlined';
 import styles from './styles.module.scss'
 import { userAPI } from '../../store/reducers/user.slice';
 
@@ -21,17 +20,17 @@ const NavBar: FC = () => {
     justifyContent: 'start'
   }
 
-    const {data: me} =  userAPI.useGetMeQuery()
+  const {data: me} =  userAPI.useGetMeQuery()
+
     const [isOpen, setIsOpen] = useState<boolean>(false)
     const onClick = () => {
       setIsOpen(!isOpen)
     }
 
   return (
-    me && (
       <Box className={styles.navBar}>
         <Button sx={{color: 'text.primary', ...alignButtons }}> 
-          <Link to='/me' className={styles.imgBtn} style={{ color: 'inherit' }}> 
+          <Link to={`/user/:${me?._id}`} className={styles.imgBtn} style={{ color: 'inherit' }}> 
               <PersonIcon/>
             <span>Профиль</span></Link>
         </Button>
@@ -53,12 +52,6 @@ const NavBar: FC = () => {
             <span>Уведомления</span>
           </Link>
         </Button>
-        <Button sx={{color: 'text.primary', ...alignButtons}}> 
-          <Link to='/drafts' className={styles.imgBtn} style={{ color: 'inherit' }}>
-            <InsertDriveFileOutlinedIcon/> 
-            <span>Черновики</span>
-          </Link>
-        </Button>
         <Button 
           variant='contained' 
           sx={{width:'100%', marginTop: '10px'}}
@@ -69,7 +62,6 @@ const NavBar: FC = () => {
         </Button>
       <CreatePostForm isOpen = {isOpen} setIsOpen={onClick}/>
       </Box>
-    )
   );
 };
 

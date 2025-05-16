@@ -1,14 +1,18 @@
 .outlet {
-    padding: 80px 50px;
+    padding: 65px 20px;
 
     @include respond-from ('sm') {
-        padding: 60px 8vw 60px calc(8vw + 220px) ;
+        padding: 80px 8vw 20px calc(8vw + 220px) ;
     }
 
     @include respond-from ('md') {
-        padding: 60px 15vw 60px calc(15vw + 220px) ;
+        padding: 65px 15vw 20px calc(15vw + 220px) ;
     }
     @include respond-from ('xl') {
-        padding: 60px 22vw 60px calc(22vw + 220px) ;
+        padding: 65px 22vw 20px calc(22vw + 220px) ;
+    }
+
+    @include respond-from ('xxl') {
+        padding: 65px 25vw 20px calc(25vw + 220px) ;
     }
 }

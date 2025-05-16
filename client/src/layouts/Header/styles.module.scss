@@ -20,6 +20,10 @@ header {
         padding: 0 22vw 0 calc(22vw + 20px);
     }
 
+    @include respond-from ('xxl') {
+        padding: 0 25vw 0 calc(25vw + 20px);
+    }
+
     .logo {
         font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
         font-weight: 500;
@@ -55,5 +59,12 @@ header {
         display: flex;
         justify-content: space-between;
         gap: 10px
+    }
+
+    .avatar {
+        display: none;
+        @include respond-from ('sm') {
+            display: flex;
+        }
     }
 }

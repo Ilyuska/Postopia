@@ -13,8 +13,8 @@ const MyThemeProvider: FC<MyThemeProviderProps> = ({ children }) => {
         palette: {
           mode: 'light',
           background: {
-            default: '#ffffff', // Белый фон
-            paper: '#f5f5f5',  // Светло-серый для карточек
+            default: '#f5f5f5', // Белый фон
+            paper: '#ffffff',  // Светло-серый для карточек
           },
           primary: {
             main: '#1976d2',   // Классический синий (акцентные элементы)

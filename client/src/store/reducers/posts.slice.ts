@@ -8,22 +8,32 @@ interface INewPost {
 } 
 
 export const postAPI = createApi({
-    reducerPath: 'postAPI', //Имя Service
-    baseQuery: fetchBaseQuery({baseUrl: 'http://localhost:3000/posts'}), //Куда запрос кидать
+    reducerPath: 'postAPI',
+    baseQuery: fetchBaseQuery({
+        baseUrl: 'http://localhost:3000/posts', 
+        prepareHeaders: (headers) => {
+            const token = localStorage.getItem('token');
+            if (token) {
+            headers.set('Authorization', `Bearer ${token}`);
+            }
+            return headers;
+      },}), 
     tagTypes: ['Post'], 
+
     endpoints: (build) => ({
-        // .query только для get запроса
-        fetchAllPosts: build.query<IPost[], string>({ 
-            query: (token) => ({
+        fetchAllPosts: build.query<IPost[], void>({ 
+            query: () => ({
                 url: ``,
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
             }),
             providesTags: (result) => result ? ['Post'] : []
         }),
 
-        // .mutation для запроса который изменяет данные (POST, PUT, DELETE)
+        fetchOnePosts: build.query<IPost, string>({ 
+            query: (postId) => ({
+                url: `${postId}`,
+            }),
+        }),
+
         createPost: build.mutation<IPost, INewPost> ({
             query: ({title, message, image}) => ({ //Параметр это новый пост
                 url: ``, //Приписка куда идет запрос после baseUrl

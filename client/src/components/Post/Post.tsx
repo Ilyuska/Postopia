@@ -1,15 +1,14 @@
 import { FC, useState } from 'react';
-import styles from './styles.module.scss';
-import { IPost } from '../../interfaces/IPost';
+import { Link } from 'react-router-dom';
 import { Avatar, Box } from '@mui/material';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import ShareIcon from '@mui/icons-material/Share';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import PersonIcon from '@mui/icons-material/Person';
+import { IPost } from '../../interfaces/IPost';
 import { postLike } from '../../api/mainAPI';
-import { Link } from 'react-router-dom';
-import { userAPI } from '../../store/reducers/user.slice';
+import styles from './styles.module.scss';
 
 interface PostProps {
   post: IPost;
@@ -18,7 +17,7 @@ interface PostProps {
 const Post: FC<PostProps> = ({ post }) => {
   const [liked, setLiked] = useState(post.liked)
   const [likesCount, setLikesCount] = useState(post.likes?.length || 0);
-  const {data: me} =  userAPI.useGetMeQuery()
+  // console.log(post)
 
 
   const handleLike = async () => {
@@ -33,48 +32,57 @@ const Post: FC<PostProps> = ({ post }) => {
 
 
   return (
-    <Box className={styles.post}>
-      <Link to={post.user._id===me?._id ? '/me': `/user/:${post.user._id}`}>
-        <Box className={styles.person} sx={{ backgroundColor: 'primary.main' }}>
+    <Box className={styles.post} sx={{ borderTop: 3, borderColor: 'background.default', color: 'text.primary'}}>
+      <Link to={`/user/:${post.user._id}`}>
+        <Box className={styles.person} >
           <Avatar src={post.user?.avatar ? `http://localhost:3000/uploads/${post.user.avatar}` : undefined}>
               {!post.user?.avatar && <PersonIcon />}
           </Avatar>
-          <span>{post.user?.firstName}</span>
+          <Box sx={{color: 'text.primary'}}>{post.user?.firstName} {post.user?.lastName}</Box>
         </Box>  
       </Link>
 
-      <Box sx={{ backgroundColor: 'secondary.main' }} className={styles.mainContent}>
-        {post.image && (
-          <img 
-            src={`http://localhost:3000/uploads/${post.image}`} 
-            alt="postImage" 
-            className={styles.image}
-          />
-        )}
-        
-        <Box className={styles.text}>
-          <h3 className={styles.title}>{post.title}</h3>
-          <div className={styles.message}>{post.message}</div>
+
+        <Box  className={styles.mainContent}>
+          {post.image && (
+
+              <img 
+                src={`http://localhost:3000/uploads/${post.image}`} 
+                alt="postImage" 
+                className={styles.image}
+              />
+  
+          )}
+
+          <Link to={`/posts/${post._id}`}>
+            <Box className={styles.text} sx={{color: 'text.primary'}}>
+              <h3 className={styles.title}>{post.title}</h3>
+              <div className={styles.message}>{post.message}</div>
+            </Box>
+          </Link>
+              
+            <Box sx={{ display: 'flex', gap: '15px', color: 'text.primary' }}>
+              <Box className={styles.likes}>
+                {liked
+                  ? (<FavoriteIcon sx={{ color: 'red' }} onClick = {() => handleLike()}/>) 
+                  : (<FavoriteBorderIcon sx={{ color: 'red' }} onClick = {() => handleLike()}/> )
+                }
+                <span>{likesCount || 0}</span>
+              </Box>
+              <Link to={`/posts/${post._id}`}>
+                <Box className={styles.comments} sx={{color: 'text.primary'}}>
+                  <ChatBubbleOutlineIcon />
+                  <span>0</span>
+                </Box>
+              </Link>
+              <Box className={styles.likes}>
+                <ShareIcon />
+              </Box>
+            </Box>
+
         </Box>
-        
-        <Box sx={{ display: 'flex', gap: '15px', py: '5px' }}>
-          <Box className={styles.likes}>
-            {liked
-              ? (<FavoriteIcon sx={{ color: 'red' }} onClick = {() => handleLike()}/>) 
-              : (<FavoriteBorderIcon sx={{ color: 'red' }} onClick = {() => handleLike()}/> )
-            }
-            <span>{likesCount || 0}</span>
-          </Box>
-          <Box className={styles.comments}>
-            <ChatBubbleOutlineIcon />
-            <span>0</span>
-          </Box>
-          <Box className={styles.likes}>
-            <ShareIcon />
-          </Box>
-        </Box>
-      </Box>
     </Box>
+ 
   );
 };
 

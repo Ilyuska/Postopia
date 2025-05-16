@@ -9,7 +9,7 @@ import Footer from './Footer/Footer';
 
 const Layout: FC = ({}) => {
   const navigate = useNavigate()
-  const { data, isError, isLoading } = userAPI.useGetMeQuery()
+  const { data: me, isError, isLoading } = userAPI.useGetMeQuery()
 
   useEffect(() => {
     const token = localStorage.getItem('token')
@@ -32,11 +32,11 @@ const Layout: FC = ({}) => {
   return (
     <>
         <Header/>
-        <NavBar />
+        {me && ( <NavBar />)}
         <Box component='div' sx={{bgcolor: 'background.default', height: 'auto', minHeight: '100vh' }} className={styles.outlet}>
           <Outlet />
         </Box>
-        <Footer/>
+        {me && (<Footer/>)}
     </>
   );
 };

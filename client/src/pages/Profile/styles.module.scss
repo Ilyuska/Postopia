@@ -1,0 +1,10 @@
+.title {
+    text-align: center;
+    padding-bottom: 8px;
+    margin: 0;
+
+    @include respond-from ('sm') {
+        text-align: left;
+        padding-left: 50px;
+    }
+}

@@ -1,21 +1,18 @@
-import {FC, useContext, useState} from 'react'
+import {FC, useContext} from 'react'
 import { Link } from 'react-router-dom';
 import {MyThemeContext} from '../../contexts/index.ts';
-import { Avatar, Input, Box, Button, ButtonGroup } from '@mui/material';
+import { Avatar, Input, Box } from '@mui/material';
 import PersonIcon from '@mui/icons-material/Person';
 import SearchIcon from '@mui/icons-material/Search';
 import DarkModeOutlinedIcon from '@mui/icons-material/DarkModeOutlined';
 import LightModeOutlinedIcon from '@mui/icons-material/LightModeOutlined';
-import BurgerMenu from '../BurgerMenu/BurgerMenu.tsx';
 import { userAPI } from '../../store/reducers/user.slice.ts';
 import styles from "./styles.module.scss"
 
 const Header: FC = ({}) => {
   const {data: me} =  userAPI.useGetMeQuery()
   const {isDarkTheme, toggleTheme} = useContext(MyThemeContext)
-  const [burgerOpen, setBurgerOpen] = useState<boolean>(false)
 
-  const burgerSwitch = () => setBurgerOpen(!burgerOpen)
 
   return (
       <Box 
@@ -43,12 +40,11 @@ const Header: FC = ({}) => {
 
 
           {me && (
-            <>
-              <Avatar onClick={burgerSwitch} src={`http://localhost:3000/uploads/${me?.avatar}`} sx={{ width: 27, height: 27}} >
-                {!me?.avatar && <PersonIcon />}               
+            <Link to={`/user/:${me._id}`} className={styles.avatar}>
+              <Avatar src={`http://localhost:3000/uploads/${me?.avatar}`} sx={{ width: 27, height: 27}} >
+                {!me.avatar && <PersonIcon />}               
               </Avatar>
-              <BurgerMenu status = {burgerOpen} setStatus={burgerSwitch}/>
-            </>
+            </Link>
           )}
         </div>
         

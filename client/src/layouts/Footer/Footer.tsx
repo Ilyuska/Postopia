@@ -1,13 +1,14 @@
 import {FC, ReactNode, useState} from 'react'
-import {Button } from '@mui/material';
+import { Link, useNavigate } from 'react-router-dom';
+import {Avatar, Button } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
+import PersonIcon from '@mui/icons-material/Person';
 import ReorderIcon from '@mui/icons-material/Reorder';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
-import InsertDriveFileOutlinedIcon from '@mui/icons-material/InsertDriveFileOutlined';
-import styles from './styles.module.scss'
-import { Link, useNavigate } from 'react-router-dom';
 import CreatePostForm from '../../components/CreatePostForm/CreatePostForm';
+import { userAPI } from '../../store/reducers/user.slice';
+import styles from './styles.module.scss'
 
 interface CustomButtonProps {
   children: ReactNode;
@@ -23,7 +24,7 @@ const CustomButton: FC<CustomButtonProps> = ({ children, linkTo }) => {
         variant="outlined"
         onClick={() => navigate(linkTo)}
       >
-            <Link to={linkTo}> {children}</Link>
+            {children}
        
       </Button>
   );
@@ -31,6 +32,7 @@ const CustomButton: FC<CustomButtonProps> = ({ children, linkTo }) => {
 
 
 const Footer: FC = () => {
+  const {data: me} =  userAPI.useGetMeQuery()
   const [isOpen, setIsOpen] = useState<boolean>(false)
   const onClick = () => {
     setIsOpen(!isOpen)
@@ -44,9 +46,12 @@ const Footer: FC = () => {
         <Button className={styles.button_add} sx={{ bgcolor: 'primary.main', borderTop: 2, borderColor: 'background.default'}} variant='outlined' onClick={onClick}>
           <AddIcon sx={{color: 'background.default'}}/>
         </Button>
-        
-        <CustomButton linkTo='/drafts'> <InsertDriveFileOutlinedIcon sx={{color: 'background.default'}}/> </CustomButton>
         <CustomButton linkTo='/favorites'> <FavoriteIcon color='error'/> </CustomButton>
+        <CustomButton linkTo={`/user/${me?._id}`}> 
+          <Avatar src={`http://localhost:3000/uploads/${me?.avatar}`} sx={{ width: 25, height: 25}} >
+            {!me?.avatar && <PersonIcon />}               
+          </Avatar>
+        </CustomButton>
       </footer>
       <CreatePostForm isOpen = {isOpen} setIsOpen={onClick}/>
     </>

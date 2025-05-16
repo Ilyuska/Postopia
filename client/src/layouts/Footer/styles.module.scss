@@ -12,7 +12,10 @@
     }
 
     .button_others {
+        display: flex;
         height: 45%;
+        align-items: center;
+        align-content: center;
     }
     .button_add {
         height: 70%;

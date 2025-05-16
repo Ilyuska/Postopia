@@ -12,7 +12,7 @@ interface ICreatePost {
 class PostService {
     async getAll (userId: Types.ObjectId) {
         const posts = await Post.find()
-        .populate('user', 'name avatar') // Подгружаем только name и avatar
+        .populate('user', 'firstName lastName avatar') // Подгружаем только name и avatar
         .exec();
 
         if (!posts || posts.length === 0) {

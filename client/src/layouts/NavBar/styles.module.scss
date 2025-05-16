@@ -11,13 +11,14 @@
         left: 8vw;
     }
     @include respond-from ('md') {
-
         left: 15vw;
     }
 
     @include respond-from ('xl') {
-
         left: 22vw;
+    }
+    @include respond-from ('xxl') {
+        left: 25vw
     }
 
     .imgBtn {
