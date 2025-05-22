@@ -1,14 +1,14 @@
 import { Router} from "express"
-import CommentController from "../controllers/postController"
+import CommentController from "../controllers/commentController"
 import { isAuthorizated } from "../middlewares/isAuthorizated";
 import { isValidComment } from "../middlewares/isValidComment";
 
 
 const commentRouter = Router();
 
-commentRouter.get('/', isAuthorizated, CommentController.getAll) 
+commentRouter.get('/:postId', isAuthorizated, CommentController.getAll) 
 
-commentRouter.post('/', isAuthorizated, isValidComment, CommentController.create )
+commentRouter.post('/:postId', isAuthorizated, isValidComment, CommentController.create )
 
 //Добавить вместо isAuth проверку чей коммент.
 commentRouter.patch('/:commentId', isAuthorizated, isValidComment, CommentController.update) //Сделать проверку на то мой ли пост

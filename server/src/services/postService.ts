@@ -1,7 +1,7 @@
-import mongoose, { Types } from "mongoose";
+import { Types } from "mongoose";
 import Post, { IPost } from "../models/Post";
 import User from "../models/User";
-import { ForbiddenError, NotFoundError } from "../models/Error";
+import { ForbiddenError, NotFoundError, ValidationError } from "../models/Error";
 import { isValidId } from "../middlewares/isValidId";
 
 interface ICreatePost {
@@ -12,10 +12,15 @@ interface ICreatePost {
 }
 
 class PostService {
-    async getAll (userId: string) {
+    async getAll (userId: string, page: number, limit: number = 10) {
+        if (page < 1) throw new ValidationError('Page должен быть >= 1');
         const posts = await Post.find()
+            .skip((page - 1) * limit) // Пропускаем (page-1)*10 документов
+            .limit(limit)
             .populate('user', 'firstName lastName avatar') // Автор поста
             .sort({ createdAt: -1 }) // Сортировка постов (новые сначала)
+
+        const totalCount = await Post.countDocuments({ user: userId });
 
         const postsWithLiked = posts.map(post => {
             const plainPost = post.toObject(); // превращаем документ в обычный объект
@@ -27,7 +32,14 @@ class PostService {
             };
             });
 
-        return postsWithLiked;
+        return {
+            posts: postsWithLiked,
+            pagination: {
+                page,
+                totalCount,
+                totalPages: Math.ceil(totalCount / limit),
+            },
+    };
     }
 
 

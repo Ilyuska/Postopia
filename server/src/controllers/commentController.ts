@@ -1,13 +1,14 @@
 import { NextFunction, Request, Response } from 'express';
-import commentService from '../services/commentService';
+import commentService  from '../services/commentService';
 import { UnauthorizedError } from '../models/Error';
 
 class CommentController {
     async getAll (req: Request, res: Response, next: NextFunction) {
         try {
-            const { postId } = req.params
-            const comments = await commentService.getAll(postId)
-            res.status(200).json(comments)
+            const page = Number(req.query.page) || 1
+            const postId =  req.params.postId
+            const comments = await commentService.getAll( postId, page )
+            res.json(comments)
         } catch (err) {
             next(err)
         }

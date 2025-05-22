@@ -6,7 +6,8 @@ class PostController {
     async getAll (req: Request, res: Response, next: NextFunction) {
         try {
             if (!req.userId) throw new UnauthorizedError()
-            const posts = await postService.getAll(req.userId)
+            const page = Number(req.query.page) || 1
+            const posts = await postService.getAll(req.userId, page)
             res.json(posts)
         } catch (err) {
             next(err)

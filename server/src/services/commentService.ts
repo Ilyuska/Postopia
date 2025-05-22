@@ -1,27 +1,40 @@
 import Post from "../models/Post";
 import Comment from "../models/Comment";
-import { ForbiddenError, NotFoundError } from "../models/Error";
+import { ForbiddenError, NotFoundError, ValidationError } from "../models/Error";
+import { isValidId } from "../middlewares/isValidId";
 
 class CommentService {
-    async getAll (postId: string) {
-        const comments = await Post.findById(postId)
-            .populate('user', 'firstName lastName avatar')
-            .populate({
-                path: 'comments',
-                populate: {
-                    path: 'user',
-                    select: 'firstName lastName avatar'
-                },
-                options: {
-                    sort: { createdAt: -1 } // Сортировка комментариев по дате (новые сначала)
-                }
-            });
+    async getAll(postId: string, page: number = 1, limit: number = 10) {
+        isValidId(postId, 'Пост')
+        if (page < 1) throw new ValidationError('Page должен быть >= 1');
+        
+        const post = await Post.findById(postId).select('comments'); // Берём только массив comments
 
-        if (!comments) {
+        if (!post) {
             throw new NotFoundError('Пост не найден');
         }
 
-        return comments
+        const startIdx = (page - 1) * limit;
+        const endIdx = page * limit;
+        const paginatedCommentIds = post.comments.slice(startIdx, endIdx);
+
+        const comments = await Comment.find({
+            _id: { $in: paginatedCommentIds }
+        })
+            .populate('user', 'firstName lastName avatar')
+            .sort({ createdAt: -1 });
+
+        const totalCount = post.comments.length;
+
+        return {
+            comments: comments,
+            pagination: {
+                page,
+                limit,
+                totalCount,
+                totalPages: Math.ceil(totalCount / limit),
+            }
+        };
     }
 
 
