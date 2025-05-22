@@ -1,43 +1,56 @@
-import { Types } from "mongoose";
+import mongoose, { Types } from "mongoose";
 import Post, { IPost } from "../models/Post";
 import User from "../models/User";
+import { ForbiddenError, NotFoundError } from "../models/Error";
+import { isValidId } from "../middlewares/isValidId";
 
 interface ICreatePost {
-    user: Types.ObjectId | undefined
+    user: string 
     title: string,
     message: string,
     image?: string
 }
 
 class PostService {
-    async getAll (userId: Types.ObjectId) {
+    async getAll (userId: string) {
         const posts = await Post.find()
-        .populate('user', 'firstName lastName avatar') // Подгружаем только name и avatar
-        .exec();
-
-        if (!posts || posts.length === 0) {
-            return { message: 'Посты не найдены' };
-        }
+            .populate('user', 'firstName lastName avatar') // Автор поста
+            .sort({ createdAt: -1 }) // Сортировка постов (новые сначала)
 
         const postsWithLiked = posts.map(post => {
             const plainPost = post.toObject(); // превращаем документ в обычный объект
             return {
                 ...plainPost,
-                liked: post.likes.includes(userId), // добавляем поле liked
+                liked: post.likes.includes(new Types.ObjectId(userId)), // добавляем поле liked
+                likes: post.likes.length,
+                comments: post.comments.length
             };
-        });
-    
+            });
+
         return postsWithLiked;
     }
 
 
-    async getById (postId: Types.ObjectId) {
+    async getById (postId: string) {
+        isValidId(postId, "Пост")
+
         const post = await Post.findById<IPost>(postId)
+            .populate('user', 'firstName lastName avatar')
+            .populate({
+                path: 'comments',
+                populate: {
+                    path: 'user',
+                    select: 'firstName lastName avatar'
+                },
+                options: {
+                    sort: { createdAt: -1 } // Сортировка комментариев по дате (новые сначала)
+                }
+            });
 
         if (!post) {
-            return { success: false, message: 'Пост не найден' };
+            throw new NotFoundError("Пост не найден");
         }
-        return {success: true, message: post}
+        return post
     }
 
 
@@ -62,11 +75,47 @@ class PostService {
     }
 
 
-    async like (postId: Types.ObjectId | string, userId: Types.ObjectId) {
+    async update (postId: string, newPost: ICreatePost) {
+        const post = await Post.findById<IPost>(postId);
+        if (!post) {
+            throw new NotFoundError("Пост не найден")
+        }
+
+        if (post.user.toString() !== newPost.user) {
+            throw new ForbiddenError("У вас нет прав на редактирование")
+        }
+
+        const updatedPost = await Post.findByIdAndUpdate(
+            postId,
+            { $set: newPost },
+            { new: true }
+        );
+        return updatedPost
+    }
+
+
+    async delete (postId: string, userId: string) {
+        const post = await Post.findById<IPost>(postId);
+        if (!post) {
+            throw new NotFoundError("Пост не найден")
+        }
+
+        if (post.user.toString() !== userId) {
+            throw new ForbiddenError("У вас нет прав на редактирование")
+        }
+
+        await Post.findByIdAndDelete(postId,);
+        return
+    }
+
+
+    async like (postId: string, userId: string) {
+        isValidId(postId, "Пост")
+
         const post = await Post.findById(postId);
 
         if (!post) {
-            return { success: false, message: 'Пост не найден' };
+            throw new NotFoundError("Пост не найден");
         }
 
         // Проверяем, есть ли userId в массиве likes
@@ -77,7 +126,7 @@ class PostService {
                 { $pull: { favorites: post._id } }, // Удаляем пост из избранных
             );
         } else {
-            post.likes.push(userId)
+            post.likes.push(new Types.ObjectId(userId))
             await User.findByIdAndUpdate(
                 userId,
                 { $push: { favorites: post._id } }, // Добавляем пост в избранные
@@ -85,36 +134,7 @@ class PostService {
         }    
         const newPost = await post.save();
         
-        return {success: true, message: newPost}
-    }
-
-
-    async update (postId: Types.ObjectId, newPost: ICreatePost) {
-        const post = await Post.findOne({ _id: postId, user: newPost.user });
-        if (!post) {
-            return  {success: false, message: 'Вы не можете редактировать пост'}
-        }
-
-        const updatedPost = await Post.findByIdAndUpdate(
-            postId,
-            { $set: newPost },
-            { new: true }
-        );
-        return updatedPost
-            ? {success: true, message: updatedPost}
-            : { success: false, message: 'Пост не найден после обновления' }
-    }
-
-
-    async delete (postId: Types.ObjectId, userId: Types.ObjectId | undefined) {
-        const post = await Post.findOne({ _id: postId, user: userId });
-        if (!post) {
-            return  {success: false, message: 'Вы не можете удалить пост'}
-        }
-
-        const deletedPost = await Post.findByIdAndDelete<IPost>(postId)
-        return {success: true, message: 'Ваш пост удален'}
-
+        return newPost
     }
 }
 

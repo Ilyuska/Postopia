@@ -4,7 +4,8 @@ import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import userRouter from './routes/userRouter';
 import postRouter from './routes/postRouter';
-import path from 'path';
+import { errorHandler } from './middlewares/errorHandler';
+import commentRouter from './routes/commentRouter';
 
 
 
@@ -27,6 +28,9 @@ app.use('/uploads', express.static('uploads')); //Делает папку с и�
 //Подключаем свои routes
 app.use('/', userRouter)
 app.use('/posts', postRouter)
+app.use('/posts/:postId/comments', commentRouter)
+
+app.use(errorHandler)
 
 // Запуск сервера
 app.listen(PORT, () => {

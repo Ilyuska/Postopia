@@ -8,7 +8,7 @@ const authorizationSchema = z.object({
 
 export const authorizationValidator = (req: Request, res: Response, next: NextFunction) => {
     try {
-        const validatedUser = authorizationSchema.parse(req.body);
+        authorizationSchema.parse(req.body);
         next()
     } catch (error) {
         if (error instanceof z.ZodError) {

@@ -32,11 +32,11 @@ const PostSchema: Schema = new Schema<IPost>({
         ref: 'User',
         required: true
     },
-    // comments: [{ 
-    //     type: Schema.Types.ObjectId, 
-    //     ref: 'Comment',
-    //     default: [],
-    // }]
+    comments: [{ 
+        type: Schema.Types.ObjectId, 
+        ref: 'Comment',
+        default: [],
+    }]
 }, {
     timestamps: true,
     autoIndex: false,

@@ -4,6 +4,7 @@ import { isAuthorizated } from "../middlewares/isAuthorizated";
 import { upload } from "../middlewares/setupMulter";
 
 
+
 const postRouter = Router();
 
 postRouter.get('/', isAuthorizated, PostController.getAll) 

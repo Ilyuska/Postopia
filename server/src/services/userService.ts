@@ -1,8 +1,10 @@
-import { Types } from 'mongoose';
+import mongoose, { Types } from 'mongoose';
 import bcrypt from 'bcrypt'
 import User from "../models/User";
 import { hashingPassword } from "../utils/hashingPassword";
 import { makingToken } from "../utils/makingToken";
+import { ConflictError, NotFoundError, UnauthorizedError, ValidationError } from '../models/Error';
+import { isValidId } from '../middlewares/isValidId';
 
 interface ILogin {
     email: string;
@@ -22,7 +24,7 @@ class UserService {
         const findedUser = await User.findOne({email: user.email})
 
         if (findedUser) {
-            throw new Error('Такой пользователь уже существует')
+            throw new ConflictError('Такой пользователь уже существует')
         }
 
         const hash = await hashingPassword(user.password);
@@ -53,13 +55,13 @@ class UserService {
         const findedUser = await User.findOne({email: user.email}) //Ищем пользователя по имейлу
 
         if (!findedUser) {
-            throw new Error('Неверный логин или пароль');
+            throw new UnauthorizedError('Неверный логин или пароль');
         } //Проверка существования пользователья
 
         const isValidPassword = await bcrypt.compare(user.password, findedUser.passwordHash)
 
         if (!isValidPassword) {
-            throw new Error('Неверный логин или пароль');
+            throw new UnauthorizedError('Неверный логин или пароль');
         }
 
         const { passwordHash, createdAt, updatedAt, favorites, ...userData } = findedUser.toObject();
@@ -72,11 +74,13 @@ class UserService {
     }   
 
     
-    async getById (userId: Types.ObjectId) {
-        const findedUser = await User.findById({_id: userId})
+    async getById (userId: string) {
+        isValidId(userId, "Пользователь")
+        const findedUser = await User.findById(userId)
+    
 
         if (!findedUser) {
-            throw new Error('Пользователь не найден');
+            throw new NotFoundError('Пользователь не найден');
         } 
 
         const { passwordHash, createdAt, updatedAt, email, favorites, ...userData } = findedUser.toObject();
@@ -87,11 +91,11 @@ class UserService {
     }
 
 
-    async getMe(userId: Types.ObjectId) {
+    async getMe(userId: string) {
         const findedUser = await User.findById(userId).populate('posts');
 
         if (!findedUser) {
-            throw new Error('Пользователь не найден');
+            throw new NotFoundError('Пользователь не найден');
         } 
 
         const { passwordHash, createdAt, updatedAt, favorites, ...userData } = findedUser.toObject();
@@ -102,11 +106,11 @@ class UserService {
     }
 
 
-    async update(userId: Types.ObjectId, user: Omit<IRegistration, 'password' | 'email'>) {
+    async update(userId: string, user: Omit<IRegistration, 'password' | 'email'>) {
         const updatedUser =  await User.findByIdAndUpdate(userId, {...user}, {new: true})
 
         if (!updatedUser) {
-            throw new Error('Пользователь не найден');
+            throw new NotFoundError('Пользователь не найден');
         } 
 
         const { passwordHash, createdAt, updatedAt, email, favorites, ...userData } = updatedUser.toObject();
@@ -117,27 +121,23 @@ class UserService {
     }
 
     
-    async delete (userId: Types.ObjectId) {
+    async delete (userId: string) {
         const deletedUser = await User.findByIdAndDelete(userId)
 
         if (!deletedUser) {
-            throw new Error('Пользователь не найден');
+            throw new NotFoundError('Пользователь не найден');
         } 
 
-        return {message: 'Ваш аккаунт удален'}
+        return
     }
 
-    async getFavorites (userId: Types.ObjectId) {
+    async getFavorites (userId: string) {
         const findedUser = await User.findById(userId).populate('favorites');
         if (!findedUser) {
-            throw new Error('Пользователь не найден');
+            throw new NotFoundError('Пользователь не найден');
         } 
 
-        const { favorites, ...userData } = findedUser.toObject();
-
-        return {
-            favorites
-        }
+        return findedUser.favorites
     }
 }
 
