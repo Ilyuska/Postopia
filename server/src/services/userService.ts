@@ -1,10 +1,10 @@
-import mongoose, { Types } from 'mongoose';
 import bcrypt from 'bcrypt'
 import User from "../models/User";
 import { hashingPassword } from "../utils/hashingPassword";
 import { makingToken } from "../utils/makingToken";
 import { ConflictError, NotFoundError, UnauthorizedError, ValidationError } from '../models/Error';
 import { isValidId } from '../middlewares/isValidId';
+import Like from '../models/Like';
 
 interface ILogin {
     email: string;
@@ -35,13 +35,11 @@ class UserService {
             birthday: user.birthday,
             passwordHash: hash, // Захэшированный пароль
             avatar: user.avatar,
-            posts: [],
-            favorites: []
         });
 
         const savedUser = await doc.save();
 
-        const { passwordHash, createdAt, updatedAt, favorites, ...userData } = savedUser.toObject();
+        const { passwordHash, createdAt, updatedAt, email, ...userData } = savedUser.toObject();
         const token = makingToken(savedUser.id.toString());
    
         return {
@@ -64,7 +62,7 @@ class UserService {
             throw new UnauthorizedError('Неверный логин или пароль');
         }
 
-        const { passwordHash, createdAt, updatedAt, favorites, ...userData } = findedUser.toObject();
+        const { passwordHash, createdAt, updatedAt, email, ...userData } = findedUser.toObject();
         const token = makingToken(findedUser.id.toString());
 
         return {
@@ -83,7 +81,7 @@ class UserService {
             throw new NotFoundError('Пользователь не найден');
         } 
 
-        const { passwordHash, createdAt, updatedAt, email, favorites, ...userData } = findedUser.toObject();
+        const { passwordHash, createdAt, updatedAt, email, ...userData } = findedUser.toObject();
 
         return {
             ...userData
@@ -92,13 +90,13 @@ class UserService {
 
 
     async getMe(userId: string) {
-        const findedUser = await User.findById(userId).populate('posts');
+        const findedUser = await User.findById(userId);
 
         if (!findedUser) {
-            throw new NotFoundError('Пользователь не найден');
+            throw new NotFoundError('Вы не авторизированы');
         } 
 
-        const { passwordHash, createdAt, updatedAt, favorites, ...userData } = findedUser.toObject();
+        const { passwordHash, createdAt, updatedAt, email, ...userData } = findedUser.toObject();
 
         return {
             ...userData
@@ -113,7 +111,7 @@ class UserService {
             throw new NotFoundError('Пользователь не найден');
         } 
 
-        const { passwordHash, createdAt, updatedAt, email, favorites, ...userData } = updatedUser.toObject();
+        const { passwordHash, createdAt, updatedAt, email, ...userData } = updatedUser.toObject();
 
         return {
             ...userData
@@ -123,21 +121,31 @@ class UserService {
     
     async delete (userId: string) {
         const deletedUser = await User.findByIdAndDelete(userId)
-
         if (!deletedUser) {
             throw new NotFoundError('Пользователь не найден');
         } 
-
-        return
     }
 
-    async getFavorites (userId: string) {
-        const findedUser = await User.findById(userId).populate('favorites');
-        if (!findedUser) {
+    async getFavorites (userId: string, page: number, limit:number = 5) {
+        if (page < 1) throw new ValidationError('Page должен быть >= 1');
+        const user = await User.findById(userId);
+        if (!user) {
             throw new NotFoundError('Пользователь не найден');
         } 
 
-        return findedUser.favorites
+        const posts = await Like.find({ user: userId })
+            .skip((page - 1) * limit)
+            .limit(limit)
+            .sort({ createdAt: -1 })
+            .populate({
+                path: 'post',
+                populate: {
+                    path: 'user',
+                    select: 'firstName lastName avatar',
+                }
+            });
+
+        return posts
     }
 }
 

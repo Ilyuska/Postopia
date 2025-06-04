@@ -1,5 +1,4 @@
 import { NextFunction, Request, Response } from 'express';
-import { Types } from 'mongoose';
 import UserService from '../services/userService';
 import { AppError, UnauthorizedError } from '../models/Error';
 
@@ -8,11 +7,7 @@ class UserController {
     async registration (req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const {email, firstName, lastName, birthday, password} = req.body
-            const avatar = req.file?.filename;
-
-            if (!avatar) {
-                throw new AppError(400, 'Avatar is required');
-            }
+            const avatar = req.file?.filename || '';
 
             const user = await UserService.registration({email, firstName, lastName, birthday, password, avatar})
             res.status(201).json(user)
@@ -70,8 +65,8 @@ class UserController {
     async delete  (req: Request, res: Response, next: NextFunction) {
         try {
             if (!req.userId) throw new UnauthorizedError()
-            const message = await UserService.delete(req.userId)
-            res.status(200).json(message)
+            await UserService.delete(req.userId)
+            res.status(204)
         } catch (err) {
             next(err)
         }
@@ -80,7 +75,8 @@ class UserController {
     async getFavorites  (req: Request, res: Response, next: NextFunction) {
         try {
             if (!req.userId) throw new UnauthorizedError()
-            const favorites = await UserService.getFavorites(req.userId)
+            const page = Number(req.query.page) || 1
+            const favorites = await UserService.getFavorites(req.userId, page)
             res.status(200).json(favorites)          
         } catch (err) {
             next(err)

@@ -8,23 +8,19 @@ class CommentService {
         isValidId(postId, 'Пост')
         if (page < 1) throw new ValidationError('Page должен быть >= 1');
         
-        const post = await Post.findById(postId).select('comments'); // Берём только массив comments
+        const post = await Post.findById(postId)
 
         if (!post) {
             throw new NotFoundError('Пост не найден');
         }
 
-        const startIdx = (page - 1) * limit;
-        const endIdx = page * limit;
-        const paginatedCommentIds = post.comments.slice(startIdx, endIdx);
+        const comments = await Comment.find({ post: postId })
+            .skip((page - 1) * limit)
+            .limit(limit)
+            .sort({ createdAt: -1 })
+            .populate('user', 'firstName lastName avatar');
 
-        const comments = await Comment.find({
-            _id: { $in: paginatedCommentIds }
-        })
-            .populate('user', 'firstName lastName avatar')
-            .sort({ createdAt: -1 });
-
-        const totalCount = post.comments.length;
+        const totalCount = post.commentsCount;
 
         return {
             comments: comments,
@@ -48,14 +44,12 @@ class CommentService {
         const doc = new Comment({
             user: userId,
             message: message,
+            post: postId
         });
 
-        const savedComment = await doc.save()
+        await Post.findByIdAndUpdate(postId, { $inc: { comments: 1 } });
 
-        await Post.findByIdAndUpdate(
-            postId,
-            { $push: { comments: savedComment._id } }, // Добавляем ID поста в массив posts
-        );
+        const savedComment = await doc.save()
         
         return savedComment
     }
@@ -71,13 +65,11 @@ class CommentService {
             throw new ForbiddenError('Вы можете изменять только свои комментарии')
         }
 
-        await Comment.findByIdAndUpdate( commentId,
-            { $set: {message} },
-        )
+        await Comment.findByIdAndUpdate(commentId, {...comment, message}, {new: true})
     }
 
 
-    async delete (userId: string, postId: string, commentId: string ) {
+    async delete (userId: string, commentId: string ) {
         const comment =  await Comment.findById(commentId)
 
         if (!comment) {
@@ -87,11 +79,7 @@ class CommentService {
             throw new ForbiddenError('Вы можете удалять только свои комментарии')
         }
 
-        await Comment.findByIdAndUpdate(commentId)
-        await Post.findByIdAndUpdate(
-            postId,
-            { $pull: { comments: comment.id } }, // Добавляем пост в избранные
-        );
+        await Comment.findByIdAndDelete(commentId)
     }
 }
 

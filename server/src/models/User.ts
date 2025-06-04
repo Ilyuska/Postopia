@@ -7,8 +7,6 @@ export interface IUser extends Document {
     email: string,
     passwordHash: string,
     avatar?: string,
-    posts: Types.ObjectId[]
-    favorites: Types.ObjectId[]
     createdAt?: Date;
     updatedAt?: Date;
 } 
@@ -40,16 +38,6 @@ const UserSchema = new Schema <IUser>({
         required: false,
         default: ''
     }, //Будет не обязательным
-    posts: [{
-        type: Types.ObjectId, 
-        ref: 'Post',
-        default: []
-    }],
-    favorites: [{
-        type: Types.ObjectId, 
-        ref: 'Post',
-        default: []
-    }],
 }, {
     timestamps: true, //Добавляем время создания пользователя (И редактирования)
 });

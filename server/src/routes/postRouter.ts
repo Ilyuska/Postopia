@@ -9,6 +9,7 @@ const postRouter = Router();
 
 postRouter.get('/', isAuthorizated, PostController.getAll) 
 postRouter.get('/:id', PostController.getById)
+postRouter.get('/user/:id', isAuthorizated, PostController.getUserPosts)
 
 //Добавить валидацию поста
 postRouter.post('/', isAuthorizated , upload.single('image'), PostController.create )

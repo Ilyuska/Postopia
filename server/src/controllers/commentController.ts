@@ -44,8 +44,8 @@ class CommentController {
     async delete  (req: Request, res: Response, next: NextFunction) {
         try {
             if (!req.userId) throw new UnauthorizedError()
-            const { postId, commentId } = req.params;
-            await commentService.delete(req.userId, postId, commentId)
+            const {  commentId } = req.params;
+            await commentService.delete(req.userId, commentId)
             res.status(204)
         } catch (err) {
             next(err)

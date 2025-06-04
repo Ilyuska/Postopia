@@ -4,9 +4,11 @@ import  { Schema, Document, Types, model } from 'mongoose';
     image: string,
     title: string;
     message: string;
-    likes: Types.ObjectId[];
     user: Types.ObjectId;
-    comments: Types.ObjectId[];
+    likes: number;
+    commentsCount: number;
+    createdAt?: Date;
+    updatedAt?: Date;
 }
 
 const PostSchema: Schema = new Schema<IPost>({
@@ -22,24 +24,21 @@ const PostSchema: Schema = new Schema<IPost>({
         type: String,
         required: true,
     },
-    likes: [{
-        type: Schema.Types.ObjectId,
-        ref: 'User',
-        default: [] // Явно указываем пустой массив по умолчанию
-      }],
     user: {
         type: Schema.Types.ObjectId,
         ref: 'User',
         required: true
     },
-    comments: [{ 
-        type: Schema.Types.ObjectId, 
-        ref: 'Comment',
-        default: [],
-    }]
+    likes: {
+        type: Number,
+        required: true,
+    },
+    commentsCount: {
+        type: Number,
+        required: true,
+    },
 }, {
     timestamps: true,
-    autoIndex: false,
 });
 
 export default model<IPost>('Post', PostSchema);

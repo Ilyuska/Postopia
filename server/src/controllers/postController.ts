@@ -24,6 +24,17 @@ class PostController {
         }
     }
 
+    async getUserPosts (req: Request, res: Response, next: NextFunction) {
+        try {
+            if (!req.userId) throw new UnauthorizedError()
+            const page = Number(req.query.page) || 1
+            const posts = await postService.getUserPosts(req.params.id, req.userId, page)
+            res.json(posts)
+        } catch (err) {
+            next(err)
+        }
+    }
+
 
     async create (req: Request, res: Response, next: NextFunction) {
         try {
@@ -42,8 +53,8 @@ class PostController {
         try {
             const id = req.params.id
             if (!req.userId) throw new UnauthorizedError()
-            const post = await postService.like(id, req.userId)
-            res.json(post)
+            await postService.like(id, req.userId)
+            res.status(204)
         } catch (err) {
             next(err)
         }
