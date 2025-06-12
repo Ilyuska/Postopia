@@ -8,7 +8,7 @@ import ReorderIcon from '@mui/icons-material/Reorder';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
 import styles from './styles.module.scss'
-import { userAPI } from '../../store/reducers/user.slice';
+import { meAPI } from '../../store/reducers/me.slice';
 
 
 
@@ -20,7 +20,7 @@ const NavBar: FC = () => {
     justifyContent: 'start'
   }
 
-  const {data: me} =  userAPI.useGetMeQuery()
+  const {data: me} =  meAPI.useGetMeQuery()
 
     const [isOpen, setIsOpen] = useState<boolean>(false)
     const onClick = () => {

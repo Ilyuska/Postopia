@@ -1,9 +1,5 @@
-import { ILoginData, IRegisterData, IUser } from './../../interfaces/IUser';
+import { IUser } from '../../interfaces/IUser';
 import { fetchBaseQuery, createApi } from '@reduxjs/toolkit/query/react';
-
-interface IMe extends IUser{
-    token: string
-}
 
 export const userAPI = createApi({
     reducerPath: 'userAPI', 
@@ -20,51 +16,18 @@ export const userAPI = createApi({
       },}), 
 
     endpoints: (build) => ({
-        login: build.mutation <IMe, ILoginData> ({
-            query: (userData) => ({
-                url: `/login`, 
-                method: 'POST', 
-                body: userData
+        getUser: build.query<IUser, string>({ 
+            query: (userId) => ({
+                url: `/user/${userId}`,
             }),
-            invalidatesTags: ['User'] //Указываем что текущие сведения устарели и просим заново сделать запрос
+            providesTags: ['User']
         }),
 
-        registration: build.mutation<IMe, IRegisterData > ({
-            query: (userData) => ({ 
-                url: `/registration`, 
-                method: 'POST',
-                body: userData 
-            }),
-            invalidatesTags: ['User'] //Указываем что текущие сведения устарели и просим заново сделать запрос
-        }),
-
-        getMe: build.query<IMe, void>({ 
+        getUserPosts: build.query<IUser, void>({ 
             query: () => ({
-                url: `/me`,
+                url: `/user:`,
             }),
-            providesTags: (result) => result ? ['User'] : []
-        }),
-
-        updateMe: build.mutation<IMe, IUser>({ 
-            query: (userData) => ({
-                url: `/me`, //Достаем post.id как параметр запроса
-                method: 'PATCH',
-                body: userData,
-            }),
-            invalidatesTags: ['User']
-        }),
-
-        deleteMe: build.mutation<void, {token: string}>({ 
-            query: () => ({
-                url: `/me`,
-                method: 'DELETE',
-            }),
-            invalidatesTags: ['User']
+            providesTags: ['User']
         }),
     })	
 })
-
-
-export const {
-    util: { resetApiState }, // Ключевые утилиты
-  } = userAPI;

@@ -46,7 +46,7 @@ class CommentController {
             if (!req.userId) throw new UnauthorizedError()
             const {  commentId } = req.params;
             await commentService.delete(req.userId, commentId)
-            res.status(204)
+            res.status(204).end()
         } catch (err) {
             next(err)
         }

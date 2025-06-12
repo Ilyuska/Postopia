@@ -1,8 +1,9 @@
 import  { Schema, Document, model } from 'mongoose';
+import { IPost } from './Post';
 
 export interface ILike extends Document {
     user: Schema.Types.ObjectId,
-    post: Schema.Types.ObjectId,
+    post: IPost | Schema.Types.ObjectId;
     createdAt?: Date;
     updatedAt?: Date;
 }

@@ -8,7 +8,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import DialogTitle from '@mui/material/DialogTitle';
 import { Box, IconButton } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import { userAPI } from '../../store/reducers/user.slice';
+import { meAPI } from '../../store/reducers/me.slice';
 import InputFile from '../InputFile/InputFile';
 import styles from "./styles.module.scss"
 
@@ -19,7 +19,7 @@ const RegistrationForm: FC = () => {
   const [registerData, setRegisterData] = useState<IRegisterData>({email: "", password: "", firstName: "", lastName: "", birthday: ""})
   const [registerError, setRegisterError] = useState<IRegisterData>({email: "", password: "", firstName: "", lastName: "", birthday:""})
 
-  const [registration] = userAPI.useRegistrationMutation();
+  const [registration] = meAPI.useRegistrationMutation();
 
   const handleClose = () => {
     setOpen(false);
@@ -34,9 +34,10 @@ const RegistrationForm: FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
+    console.log(registerData)
     try {
       const user = await registration(registerData).unwrap();
+      console.log(user)
       localStorage.setItem('token', user.token);
       navigate('/posts')
     } catch (error) {

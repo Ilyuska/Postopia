@@ -125,28 +125,6 @@ class UserService {
             throw new NotFoundError('Пользователь не найден');
         } 
     }
-
-    async getFavorites (userId: string, page: number, limit:number = 5) {
-        if (page < 1) throw new ValidationError('Page должен быть >= 1');
-        const user = await User.findById(userId);
-        if (!user) {
-            throw new NotFoundError('Пользователь не найден');
-        } 
-
-        const posts = await Like.find({ user: userId })
-            .skip((page - 1) * limit)
-            .limit(limit)
-            .sort({ createdAt: -1 })
-            .populate({
-                path: 'post',
-                populate: {
-                    path: 'user',
-                    select: 'firstName lastName avatar',
-                }
-            });
-
-        return posts
-    }
 }
 
 export default new UserService();

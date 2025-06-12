@@ -1,7 +1,8 @@
 import Post, { IPost } from "../models/Post";
 import { ForbiddenError, NotFoundError, ValidationError } from "../models/Error";
 import { isValidId } from "../middlewares/isValidId";
-import Like from "../models/Like";
+import Like, { ILike } from "../models/Like";
+import { postsWithLikes } from "../utils/postsWithLikes";
 
 interface ICreatePost {
     user: string 
@@ -13,26 +14,19 @@ interface ICreatePost {
 class PostService {
     async getAll (userId: string, page: number, limit: number = 5) {
         if (page < 1) throw new ValidationError('Page должен быть >= 1');
-        const posts = await Post.find()
+        const posts = await Post.find({user: { $ne: userId }}) //Исключаем свои посты
             .skip((page - 1) * limit) // Пропускаем (page-1)*10 документов
             .limit(limit)
             .populate('user', 'firstName lastName avatar') // Автор поста
             .sort({ createdAt: -1 }) // Сортировка постов (новые сначала)
 
-        const totalCount = await Post.countDocuments();
+        console.log(posts)
 
-        const postsWithLiked = posts.map(post => {
-            const plainPost = post.toObject(); // превращаем документ в обычный объект
-            return {
-                ...plainPost,
-                liked: Boolean(Like.findOne({user: userId, post: post.id})),
-                likes: post.likes,
-                comments: post.commentsCount
-            };
-            });
+        const totalCount = await Post.countDocuments();
+        const likedPosts = await postsWithLikes(posts, userId)
 
         return {
-            posts: postsWithLiked,
+            posts: likedPosts,
             pagination: {
                 page,
                 totalCount,
@@ -63,18 +57,10 @@ class PostService {
 
         const totalCount = await Post.countDocuments({ user: userId });
 
-        const postsWithLiked = posts.map(post => {
-            const plainPost = post.toObject(); // превращаем документ в обычный объект
-            return {
-                ...plainPost,
-                liked: Boolean(Like.findOne({user: myId, post: post.id})),
-                likes: post.likes,
-                comments: post.commentsCount
-            };
-            });
+        const likedPosts = await postsWithLikes(posts, userId)
 
         return {
-            posts: postsWithLiked,
+            posts: likedPosts,
             pagination: {
                 page,
                 totalCount,
@@ -144,7 +130,7 @@ class PostService {
         const like = await Like.findOne({user:userId, post: postId})
 
         if (like) {
-            Like.findByIdAndDelete(like.id)
+            await Like.findByIdAndDelete(like.id)
         } else {
             const like = new Like ({
                 user: userId,
@@ -152,6 +138,36 @@ class PostService {
             })
             await like.save()
         }
+        return
+    }
+
+    async  getFavorites (userId: string, page: number, limit:number = 5) {
+        if (page < 1) throw new ValidationError('Page должен быть >= 1');
+
+        const likes = await Like.find({ user: userId })
+            .skip((page - 1) * limit)
+            .limit(limit)
+            .sort({ createdAt: -1 })
+            .populate({
+                path: 'post',
+                populate: {
+                    path: 'user',
+                    select: 'firstName lastName avatar',
+                }
+            })
+        
+        const totalCount = await Like.countDocuments({ user: userId });
+        const posts: IPost[] = likes.map((like) => like.post as IPost);
+        const likedPosts = await postsWithLikes(posts, userId)
+    
+        return {
+            posts: likedPosts,
+            pagination: {
+                page,
+                totalCount,
+                totalPages: Math.ceil(totalCount / limit),
+            },
+        };
     }
 }
 

@@ -1,18 +1,17 @@
 import {FC, useContext} from 'react'
 import { Link } from 'react-router-dom';
 import {MyThemeContext} from '../../contexts/index.ts';
-import { Avatar, Input, Box } from '@mui/material';
-import PersonIcon from '@mui/icons-material/Person';
+import { Input, Box } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import DarkModeOutlinedIcon from '@mui/icons-material/DarkModeOutlined';
 import LightModeOutlinedIcon from '@mui/icons-material/LightModeOutlined';
-import { userAPI } from '../../store/reducers/user.slice.ts';
+import { meAPI } from '../../store/reducers/me.slice.ts';
 import styles from "./styles.module.scss"
+import MyAvatar from '../../components/MyAvatar.tsx';
 
 const Header: FC = ({}) => {
-  const {data: me} =  userAPI.useGetMeQuery()
+  const {data: me} =  meAPI.useGetMeQuery()
   const {isDarkTheme, toggleTheme} = useContext(MyThemeContext)
-
 
   return (
       <Box 
@@ -20,34 +19,30 @@ const Header: FC = ({}) => {
         sx={{ bgcolor: 'primary.main' }}
         className={styles.header}
       >
-       <Link to="/" className={styles.logo}>
-          <Box sx={{ color: 'background.default'}}>
-            POSTOPIA
-          </Box>
-        </Link>
-
         {me && (
-          <Box className={styles.searching} component='div' sx={{bgcolor: 'background.default'}}>
-            <SearchIcon sx={{ width: 20, height: 20, color: 'text.primary', mr: '5px' }} />
-            <Input placeholder='Поиск...'  className={styles.searching_input} />
-          </Box>)}
-       
-
-        <div className={styles.settings}>
-            {isDarkTheme
-              ? <DarkModeOutlinedIcon sx={{ width: 25, height: 25, color: 'white'}} onClick={() => toggleTheme()}/>
-              : <LightModeOutlinedIcon sx={{ width: 25, height: 25, color: 'white'}} onClick={() => toggleTheme()}/> }
-
-
-          {me && (
-            <Link to={`/user/:${me._id}`} className={styles.avatar}>
-              <Avatar src={`http://localhost:3000/uploads/${me?.avatar}`} sx={{ width: 27, height: 27}} >
-                {!me.avatar && <PersonIcon />}               
-              </Avatar>
+          <>
+            <Link to="/" className={styles.logo}>
+                <Box sx={{ color: 'background.default'}}>
+                  POSTOPIA
+                </Box>
             </Link>
-          )}
-        </div>
-        
+
+            <Box className={styles.searching} component='div' sx={{bgcolor: 'background.default'}}>
+              <SearchIcon sx={{ width: 20, height: 20, color: 'text.primary', mr: '5px' }} />
+              <Input placeholder='Поиск...'  className={styles.searching_input} />
+            </Box>
+
+            <div className={styles.settings}>
+                {isDarkTheme
+                  ? <DarkModeOutlinedIcon sx={{ width: 25, height: 25, color: 'white'}} onClick={() => toggleTheme()}/>
+                  : <LightModeOutlinedIcon sx={{ width: 25, height: 25, color: 'white'}} onClick={() => toggleTheme()}/> }
+                
+                <Link to={`/user/:${me._id}`}>
+                  <MyAvatar avatar={String(me?.avatar)} firstName={me?.firstName || ""}  sx={{ width: 27, height: 27}} />
+                </Link>
+            </div>
+          </>
+        )}
         </Box>
   );
 };

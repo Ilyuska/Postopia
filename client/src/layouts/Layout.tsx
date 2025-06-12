@@ -3,13 +3,13 @@ import {Outlet, useNavigate} from 'react-router-dom'
 import Header from './Header/Header'
 import { Box } from '@mui/material';
 import NavBar from './NavBar/NavBar';
-import { userAPI } from '../store/reducers/user.slice';
+import { meAPI } from '../store/reducers/me.slice';
 import styles from "./styles.module.scss"
 import Footer from './Footer/Footer';
 
 const Layout: FC = ({}) => {
   const navigate = useNavigate()
-  const { data: me, isError, isLoading } = userAPI.useGetMeQuery()
+  const { data: me, isError, isLoading } = meAPI.useGetMeQuery()
 
   useEffect(() => {
     const token = localStorage.getItem('token')

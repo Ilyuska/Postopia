@@ -15,7 +15,7 @@ export interface IRegisterData extends ILoginData {
     firstName: string,
     lastName: string,
     birthday: string,
-    avatar?: File
+    avatar?: File | string | undefined
 }
 
 export interface IRegisterError {

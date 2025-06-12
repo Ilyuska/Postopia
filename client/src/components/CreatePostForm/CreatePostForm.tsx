@@ -59,9 +59,7 @@ const CreatePostForm: FC<CreatePostForm>  = ({isOpen, setIsOpen}) => {
     }
 
     return (
-        <>
-
-            
+        <>     
             <Dialog 
               open={isOpen} 
               onClose={handleClose}

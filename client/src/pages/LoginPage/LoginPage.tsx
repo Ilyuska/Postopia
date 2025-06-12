@@ -4,14 +4,14 @@ import { ILoginData, ILoginError } from '../../interfaces/IUser';
 import { Button, TextField, FormLabel, FormGroup, Box } from '@mui/material';
 import RegistrationForm from '../../components/RegistrationForm/RegistrationForm';
 import styles from './style.module.scss'
-import { userAPI } from '../../store/reducers/user.slice';
+import { meAPI } from '../../store/reducers/me.slice';
 
 
 const LoginPage: FC = () => {
   const navigate = useNavigate()
   useEffect(()=> {if (localStorage.getItem('token')) navigate('/posts')}, [navigate])
 
-  const [login] = userAPI.useLoginMutation();
+  const [login] = meAPI.useLoginMutation();
   
   const [loginData, setLoginData] = useState<ILoginData>({email: '', password: ''})
   const [loginError, setLoginError] = useState<ILoginData>({email: '', password: ''})

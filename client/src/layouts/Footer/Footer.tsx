@@ -7,8 +7,9 @@ import ReorderIcon from '@mui/icons-material/Reorder';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
 import CreatePostForm from '../../components/CreatePostForm/CreatePostForm';
-import { userAPI } from '../../store/reducers/user.slice';
+import { meAPI } from '../../store/reducers/me.slice';
 import styles from './styles.module.scss'
+import MyAvatar from '../../components/MyAvatar';
 
 interface CustomButtonProps {
   children: ReactNode;
@@ -32,7 +33,7 @@ const CustomButton: FC<CustomButtonProps> = ({ children, linkTo }) => {
 
 
 const Footer: FC = () => {
-  const {data: me} =  userAPI.useGetMeQuery()
+  const {data: me} =  meAPI.useGetMeQuery()
   const [isOpen, setIsOpen] = useState<boolean>(false)
   const onClick = () => {
     setIsOpen(!isOpen)
@@ -47,10 +48,8 @@ const Footer: FC = () => {
           <AddIcon sx={{color: 'background.default'}}/>
         </Button>
         <CustomButton linkTo='/favorites'> <FavoriteIcon color='error'/> </CustomButton>
-        <CustomButton linkTo={`/user/${me?._id}`}> 
-          <Avatar src={`http://localhost:3000/uploads/${me?.avatar}`} sx={{ width: 25, height: 25}} >
-            {!me?.avatar && <PersonIcon />}               
-          </Avatar>
+        <CustomButton linkTo={`/user/:${me?._id}`}> 
+          <MyAvatar avatar={String(me?.avatar)} firstName={me?.firstName || ""}  sx={{ width: 25, height: 25}} />
         </CustomButton>
       </footer>
       <CreatePostForm isOpen = {isOpen} setIsOpen={onClick}/>

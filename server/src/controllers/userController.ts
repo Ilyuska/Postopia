@@ -66,18 +66,7 @@ class UserController {
         try {
             if (!req.userId) throw new UnauthorizedError()
             await UserService.delete(req.userId)
-            res.status(204)
-        } catch (err) {
-            next(err)
-        }
-    }
-
-    async getFavorites  (req: Request, res: Response, next: NextFunction) {
-        try {
-            if (!req.userId) throw new UnauthorizedError()
-            const page = Number(req.query.page) || 1
-            const favorites = await UserService.getFavorites(req.userId, page)
-            res.status(200).json(favorites)          
+            res.status(204).end()
         } catch (err) {
             next(err)
         }

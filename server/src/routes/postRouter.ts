@@ -8,6 +8,7 @@ import { upload } from "../middlewares/setupMulter";
 const postRouter = Router();
 
 postRouter.get('/', isAuthorizated, PostController.getAll) 
+postRouter.get('/favorites', isAuthorizated, PostController.getFavorites)
 postRouter.get('/:id', PostController.getById)
 postRouter.get('/user/:id', isAuthorizated, PostController.getUserPosts)
 

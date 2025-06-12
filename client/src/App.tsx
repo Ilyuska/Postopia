@@ -4,6 +4,7 @@ import MyThemeProvider from './contexts/ThemeProvider';
 import { BrowserRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { store } from './store/store';
+import PaginationProvider from './contexts/PaginationProvider';
 
 
 const App: FC = ({}) => {
@@ -11,7 +12,9 @@ const App: FC = ({}) => {
     <Provider store = {store}>
       <MyThemeProvider>
         <BrowserRouter>
+          <PaginationProvider>
             <MyRoutes />
+          </PaginationProvider>
         </BrowserRouter>
         </MyThemeProvider>
       </Provider>

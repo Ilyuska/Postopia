@@ -14,6 +14,5 @@ userRouter.get('/user/:id', UserController.getById)
 userRouter.get('/me', isAuthorizated, UserController.getMe) 
 userRouter.patch('/me', isAuthorizated, upload.single('avatar'), UserController.update) //Редактирование моего аккаунта
 userRouter.delete('/me', isAuthorizated, UserController.delete) //Удаление моего аккаунта
-userRouter.get('/favorites', isAuthorizated, UserController.getFavorites)
 
 export default userRouter
