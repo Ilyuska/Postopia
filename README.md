@@ -1,6 +1,6 @@
 # Postopia
 
-My first fullstack project.
+Fullstack project.
 
 Итоговый стек:
 
